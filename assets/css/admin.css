@@ -1,0 +1,40 @@
+/* Certificate Photo Verifier — Admin */
+
+.cp-ld-admin h1 { margin-bottom: 20px; }
+
+.cp-ld-stats {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 28px;
+}
+.cp-ld-stat {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 18px 24px;
+	min-width: 160px;
+	text-align: center;
+}
+.cp-ld-stat--ok   { border-left: 4px solid #22c55e; }
+.cp-ld-stat--warn { border-left: 4px solid #f59e0b; }
+.cp-ld-stat__num  { display: block; font-size: 36px; font-weight: 700; color: #1a202c; }
+.cp-ld-stat__label{ display: block; font-size: 13px; color: #64748b; margin-top: 4px; }
+
+.cp-ld-table .cp-ld-thumb {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
+}
+.cp-ld-table .cp-ld-no-photo { color: #94a3b8; }
+
+.cp-ld-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 600;
+}
+.cp-ld-badge--ok   { background: #d1fae5; color: #065f46; }
+.cp-ld-badge--miss { background: #fee2e2; color: #7f1d1d; }

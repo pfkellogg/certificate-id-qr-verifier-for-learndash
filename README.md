@@ -22,15 +22,15 @@ Add this shortcode to your LearnDash certificate template. It places both the le
 [cp_ld_certificate photo_x="10" photo_y="170" photo_size="24" qr_x="240" qr_y="155" qr_size="36"]
 ```
 
-| Attribute | Description | Default |
-|-----------|-------------|---------|
-| `photo_x` | Photo horizontal position in mm from the left edge | Bottom-left corner |
-| `photo_y` | Photo vertical position in mm from the top edge | Bottom-left corner |
-| `photo_size` | Width and height of the photo in mm | `24` |
-| `qr_x` | QR horizontal position in mm from the left edge | Bottom-right corner |
-| `qr_y` | QR vertical position in mm from the top edge | Bottom-right corner |
-| `qr_size` | Width and height of the QR code in mm | `32` |
-| `label` | Show "Scan to verify" text below the QR (`1` or `0`) | `1` |
+| Attribute    | Description                                          | Default             |
+| ------------ | ---------------------------------------------------- | ------------------- |
+| `photo_x`    | Photo horizontal position in mm from the left edge   | Bottom-left corner  |
+| `photo_y`    | Photo vertical position in mm from the top edge      | Bottom-left corner  |
+| `photo_size` | Width and height of the photo in mm                  | `24`                |
+| `qr_x`       | QR horizontal position in mm from the left edge      | Bottom-right corner |
+| `qr_y`       | QR vertical position in mm from the top edge         | Bottom-right corner |
+| `qr_size`    | Width and height of the QR code in mm                | `32`                |
+| `label`      | Show "Scan to verify" text below the QR (`1` or `0`) | `1`                 |
 
 If no attributes are provided, the photo and QR code are automatically positioned in opposite bottom corners with a 10 mm margin.
 
@@ -114,4 +114,10 @@ certificate-photo-verifier-ld/
       frontend.js                  Vanilla JS upload/source handler
       photo-upload-editor.js       Block editor placeholder
 ```
+
 # certificate-photo-verifier-ld
+
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/pfkellogg/certificate-photo-verifier-ld.git
