@@ -238,6 +238,7 @@ class CP_LD_Photo_Manager {
 		$user_id = get_current_user_id();
 		wp_enqueue_style( 'cp-ld-frontend', CP_LD_URL . 'assets/css/frontend.css', array(), CP_LD_VERSION );
 		wp_enqueue_script( 'cp-ld-frontend', CP_LD_URL . 'assets/js/frontend.js', array(), CP_LD_VERSION, true );
+		$return_url = isset( $_GET['cp_ld_return'] ) ? esc_url_raw( rawurldecode( $_GET['cp_ld_return'] ) ) : '';
 		wp_localize_script( 'cp-ld-frontend', 'cpLd', array(
 			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
 			'nonce'        => wp_create_nonce( 'cp_ld_photo_nonce' ),
@@ -245,6 +246,7 @@ class CP_LD_Photo_Manager {
 			'hasGravatar'  => is_user_logged_in() && $user_id && self::get_gravatar_url( $user_id ) ? true : false,
 			'hasUpload'    => is_user_logged_in() && $user_id && self::has_uploaded_photo( $user_id ),
 			'gravatarUrl'  => is_user_logged_in() && $user_id ? ( self::get_gravatar_url( $user_id ) ?: '' ) : '',
+			'returnUrl'    => $return_url,
 			'i18n'         => array(
 				'uploading' => __( 'Uploading…', 'cp-ld' ),
 				'switching' => __( 'Switching to Gravatar…', 'cp-ld' ),

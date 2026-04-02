@@ -29,7 +29,7 @@ class CP_LD_Certificate_Gate {
 	public function gate_link( $url, $post_id, $user_id ) {
 		if ( empty( $url ) ) { return $url; }
 		if ( ! $user_id ) { $user_id = get_current_user_id(); }
-		if ( ! CP_LD_Photo_Manager::has_photo( $user_id ) ) { return $this->upload_url(); }
+		if ( ! CP_LD_Photo_Manager::has_photo( $user_id ) ) { return $this->upload_url( $url ); }
 		return $url;
 	}
 
@@ -370,7 +370,7 @@ class CP_LD_Certificate_Gate {
 		return 0;
 	}
 
-	private function upload_url() {
+	private function upload_url( $return_url = '' ) {
 		global $wpdb;
 		$page_id = (int) $wpdb->get_var(
 			"SELECT ID FROM {$wpdb->posts}
@@ -380,7 +380,11 @@ class CP_LD_Certificate_Gate {
 			 LIMIT 1"
 		);
 		if ( $page_id ) {
-			return add_query_arg( 'cp_ld_notice', 'photo_required', get_permalink( $page_id ) );
+			$args = array( 'cp_ld_notice' => 'photo_required' );
+			if ( $return_url ) {
+				$args['cp_ld_return'] = rawurlencode( $return_url );
+			}
+			return add_query_arg( $args, get_permalink( $page_id ) );
 		}
 		return admin_url( 'profile.php' ) . '#cp-ld-photo';
 	}

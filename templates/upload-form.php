@@ -79,5 +79,11 @@ $source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' )
 		</p>
 
 		<div id="cp-ld-upload-status" class="cp-ld-status" aria-live="polite"></div>
+
+		<div id="cp-ld-continue-wrap" class="cp-ld-continue-wrap" style="display:none;">
+			<a id="cp-ld-continue-btn" class="cp-ld-btn cp-ld-btn--continue" href="#">
+				<?php esc_html_e( 'Continue to Certificate', 'cp-ld' ); ?> &rarr;
+			</a>
+		</div>
 	</div>
 </div>

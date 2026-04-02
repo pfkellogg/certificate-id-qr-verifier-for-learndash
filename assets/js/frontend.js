@@ -8,14 +8,17 @@
 	var wrap = document.getElementById('cp-ld-upload-wrap');
 	if (!wrap) return;
 
-	var fileInput    = document.getElementById('cp-ld-file-input');
-	var previewImg   = document.getElementById('cp-ld-preview-img');
-	var placeholder  = document.getElementById('cp-ld-preview-placeholder');
-	var status       = document.getElementById('cp-ld-upload-status');
-	var sourceSelect = document.getElementById('cp-ld-source');
-	var uploadRow    = document.getElementById('cp-ld-upload-row');
-	var hint         = document.getElementById('cp-ld-hint');
-	var fadeTimer    = null;
+	var fileInput     = document.getElementById('cp-ld-file-input');
+	var previewImg    = document.getElementById('cp-ld-preview-img');
+	var placeholder   = document.getElementById('cp-ld-preview-placeholder');
+	var status        = document.getElementById('cp-ld-upload-status');
+	var sourceSelect  = document.getElementById('cp-ld-source');
+	var uploadRow     = document.getElementById('cp-ld-upload-row');
+	var hint          = document.getElementById('cp-ld-hint');
+	var continueWrap  = document.getElementById('cp-ld-continue-wrap');
+	var continueBtn   = document.getElementById('cp-ld-continue-btn');
+	var fadeTimer     = null;
+	var hadNoPhoto    = !cpLd.hasPhoto && !cpLd.hasUpload;
 
 	function showStatus(msg, type, autoFade) {
 		if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
@@ -40,6 +43,19 @@
 		if (placeholder) placeholder.style.display = 'none';
 		previewImg.src = url;
 		previewImg.style.display = '';
+	}
+
+	function showContinueButton() {
+		if (!continueWrap || !continueBtn) return;
+		if (cpLd.returnUrl) {
+			continueBtn.href = cpLd.returnUrl;
+		} else {
+			continueBtn.href = document.referrer || '/';
+		}
+		continueWrap.style.display = '';
+		// Trigger reflow so the CSS animation plays.
+		void continueWrap.offsetWidth;
+		continueWrap.classList.add('cp-ld-continue--visible');
 	}
 
 	// ----- Source dropdown -----
@@ -103,6 +119,10 @@
 						}
 						if (sourceSelect) {
 							sourceSelect.value = 'custom';
+						}
+						if (hadNoPhoto) {
+							hadNoPhoto = false;
+							showContinueButton();
 						}
 					} else {
 						showStatus(res.data.message, 'error', true);

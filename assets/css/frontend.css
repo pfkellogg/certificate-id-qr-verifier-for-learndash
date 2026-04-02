@@ -112,6 +112,41 @@
 .cp-ld-status--error { background: #fee2e2; color: #7f1d1d; display: block; }
 .cp-ld-status--info  { background: #dbeafe; color: #1e3a5f; display: block; }
 
+/* Continue to Certificate button */
+.cp-ld-continue-wrap {
+	text-align: center;
+	margin-top: 24px;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity .6s ease, transform .6s ease;
+}
+.cp-ld-continue--visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+.cp-ld-btn--continue {
+	display: inline-block;
+	padding: 16px 40px;
+	border-radius: 8px;
+	font-size: 17px;
+	font-weight: 700;
+	letter-spacing: .3px;
+	color: #fff;
+	background: linear-gradient(135deg, #1a6da0 0%, #1b8cd8 100%);
+	box-shadow: 0 4px 14px rgba(26, 109, 160, .35);
+	text-decoration: none;
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+.cp-ld-btn--continue:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(26, 109, 160, .45);
+	color: #fff;
+}
+.cp-ld-btn--continue:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 8px rgba(26, 109, 160, .3);
+}
+
 /* Sitewide notice bar (injected by JS when redirected) */
 .cp-ld-notice-bar {
 	background: #fef9c3;
