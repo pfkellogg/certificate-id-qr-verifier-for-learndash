@@ -359,7 +359,7 @@
 		</div>
 		<div class="vc-status vc-status--invalid">
 			<span class="vc-status__icon">⚠️</span>
-			<?php esc_html_e( 'Certificate could not be verified. This QR code may be invalid or has expired.', 'cp-ld' ); ?>
+			<?php esc_html_e( 'Certificate could not be verified. This certificate does not exist or this QR code may be invalid.', 'cp-ld' ); ?>
 		</div>
 
 	<?php endif; ?>

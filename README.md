@@ -57,6 +57,8 @@ Learners change their photo through the Gutenberg block placed on a page. If the
 
 When a certificate PDF is generated, the learner's photo is copied to a snapshot directory (`wp-content/uploads/cp-ld-cert-photos/`). The QR verification page shows this snapshot rather than the learner's current photo, so the verification page always matches the PDF.
 
+Snapshots are permanent -- changing the learner's photo afterward will not affect existing certificates or their verification pages. Snapshots are only cleared when an admin permanently deletes the learner's course data in LearnDash, which invalidates the certificate. If the learner re-completes the course (or quiz/group), the next certificate download creates a fresh snapshot with whatever photo is current at that time.
+
 ### Photo Change Log
 
 Every photo change (upload, revert to Gravatar) is logged as user meta. The log is visible to admins on the user profile under **Certificate Photo** and records:
@@ -77,7 +79,9 @@ Each certificate PDF includes a QR code that links to a public verification page
 - The course, quiz, or group title
 - Completion details (date, progress, score, pass/fail, etc.)
 
-The verification URL uses an HMAC-SHA256 signature derived from the WordPress auth salt. No tokens are stored in the database.
+The verification URL uses an HMAC-SHA256 signature derived from the WordPress auth salt. No tokens are stored in the database. The page is never cached by the browser, so it always reflects current completion status.
+
+If the learner's course data has been permanently deleted, the verification page shows an invalid certificate message even if the QR signature is still technically valid.
 
 ### PDF Rendering
 
@@ -116,8 +120,3 @@ certificate-photo-verifier-ld/
 ```
 
 # certificate-photo-verifier-ld
-
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/pfkellogg/certificate-photo-verifier-ld.git

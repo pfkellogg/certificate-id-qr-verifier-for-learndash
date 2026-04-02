@@ -39,6 +39,8 @@ class CP_LD_Verification {
 			return;
 		}
 
+		nocache_headers();
+
 		$user_id   = isset( $_GET['uid'] ) ? (int) $_GET['uid'] : 0;
 		$course_id = isset( $_GET['cid'] ) ? (int) $_GET['cid'] : 0;
 		$sig       = isset( $_GET['sig'] ) ? sanitize_text_field( wp_unslash( $_GET['sig'] ) ) : '';
@@ -70,6 +72,11 @@ class CP_LD_Verification {
 						$post_type  = 'group';
 						$completion = self::group_completion( $user_id, $course_id );
 						break;
+				}
+
+				// No completion data means course data was deleted.
+				if ( empty( $completion['completed_date'] ) ) {
+					$valid = false;
 				}
 			}
 		}

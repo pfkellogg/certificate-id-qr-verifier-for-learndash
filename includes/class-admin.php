@@ -37,6 +37,12 @@ class CP_LD_Admin {
 		$source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' );
 		wp_nonce_field( 'cp_ld_profile_photo_' . $user->ID, 'cp_ld_profile_nonce' );
 		?>
+		<script>
+		(function(){
+			var f = document.getElementById('your-profile');
+			if (f) f.enctype = 'multipart/form-data';
+		})();
+		</script>
 		<h3 id="cp-ld-photo"><?php esc_html_e( 'Certificate Photo', 'cp-ld' ); ?></h3>
 		<table class="form-table">
 			<tr>
@@ -61,9 +67,11 @@ class CP_LD_Admin {
 						</p>
 					<?php endif; ?>
 
-					<input type="file" name="cp_ld_photo" id="cp-ld-profile-file"
-						accept="image/jpeg,image/png,image/webp" />
-					<p class="description"><?php esc_html_e( 'JPEG, PNG, or WebP. Max 5 MB. Upload a file to use a custom photo.', 'cp-ld' ); ?></p>
+					<div id="cp-ld-profile-upload-row">
+						<input type="file" name="cp_ld_photo" id="cp-ld-profile-file"
+							accept="image/jpeg,image/png,image/webp" />
+						<p class="description"><?php esc_html_e( 'JPEG, PNG, or WebP. Max 5 MB. Upload a file to use a custom photo.', 'cp-ld' ); ?></p>
+					</div>
 					<?php
 					$log = CP_LD_Photo_Manager::get_log( $user->ID );
 					if ( ! empty( $log ) ) :
@@ -124,6 +132,31 @@ class CP_LD_Admin {
 							<?php endif; ?>
 						</div>
 					<?php endif; ?>
+
+					<?php if ( $has_gravatar ) : ?>
+					<script>
+					(function(){
+						var sel = document.querySelector('select[name="cp_ld_photo_source"]');
+						if (!sel) return;
+						var uploadRow = document.getElementById('cp-ld-profile-upload-row');
+						var preview   = document.getElementById('cp-ld-profile-preview');
+						var gravUrl   = <?php echo wp_json_encode( $gravatar_url ); ?>;
+						var customUrl = <?php echo wp_json_encode( $photo_url ); ?>;
+
+						function toggle() {
+							if (sel.value === 'gravatar') {
+								if (uploadRow) uploadRow.style.display = 'none';
+								if (preview && gravUrl) { preview.src = gravUrl; preview.style.display = ''; }
+							} else {
+								if (uploadRow) uploadRow.style.display = '';
+								if (preview && customUrl) { preview.src = customUrl; preview.style.display = ''; }
+							}
+						}
+						toggle();
+						sel.addEventListener('change', toggle);
+					})();
+					</script>
+					<?php endif; ?>
 				</td>
 			</tr>
 		</table>
@@ -153,8 +186,9 @@ class CP_LD_Admin {
 			}
 		}
 
-		// Upload new photo (replaces existing).
-		if ( ! empty( $_FILES['cp_ld_photo']['size'] ) ) {
+		// Upload new photo (replaces existing) — skip if Gravatar was chosen.
+		$chose_gravatar = isset( $_POST['cp_ld_photo_source'] ) && $_POST['cp_ld_photo_source'] === 'gravatar';
+		if ( ! $chose_gravatar && ! empty( $_FILES['cp_ld_photo']['size'] ) ) {
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/media.php';

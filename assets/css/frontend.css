@@ -105,7 +105,9 @@
 	border-radius: 6px;
 	font-size: 13px;
 	font-weight: 500;
+	transition: opacity .4s ease;
 }
+.cp-ld-status--fading { opacity: 0; }
 .cp-ld-status--ok    { background: #d1fae5; color: #065f46; display: block; }
 .cp-ld-status--error { background: #fee2e2; color: #7f1d1d; display: block; }
 .cp-ld-status--info  { background: #dbeafe; color: #1e3a5f; display: block; }

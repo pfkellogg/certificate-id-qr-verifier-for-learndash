@@ -17,7 +17,12 @@ class CP_LD_Certificate_Gate {
 		add_action( 'template_redirect', array( $this, 'block_direct_access' ), 5 );
 		add_filter( 'learndash_certification_content_write_cell_args', array( $this, 'filter_cert_html' ), 10, 2 );
 		add_action( 'learndash_certification_content_write_cell_after', array( $this, 'draw_on_pdf' ), 10, 2 );
+		add_action( 'learndash_delete_user_data', array( $this, 'on_course_data_deleted' ) );
 		add_shortcode( 'cp_ld_certificate', array( $this, 'certificate_shortcode' ) );
+	}
+
+	public function on_course_data_deleted( $user_id ) {
+		CP_LD_Photo_Manager::clear_cert_snapshots( $user_id );
 	}
 
 	public function gate_link( $url, $post_id, $user_id ) {
@@ -84,40 +89,63 @@ class CP_LD_Certificate_Gate {
 
 		$photo_raw  = '';
 		$photo_src  = '';
-		$photo_id   = CP_LD_Photo_Manager::get_photo_id( $user_id );
-		$photo_file = $photo_id ? get_attached_file( $photo_id ) : '';
-		if ( $photo_file && file_exists( $photo_file ) ) {
-			$ext = strtolower( pathinfo( $photo_file, PATHINFO_EXTENSION ) );
+
+		// Use existing snapshot so the certificate keeps the original photo.
+		$snapshot_file = self::get_snapshot_file( $user_id, $post_id );
+		if ( $snapshot_file ) {
+			$ext = strtolower( pathinfo( $snapshot_file, PATHINFO_EXTENSION ) );
 			if ( $ext === 'webp' && function_exists( 'imagecreatefromwebp' ) ) {
-				$im = @imagecreatefromwebp( $photo_file );
+				$im = @imagecreatefromwebp( $snapshot_file );
 				if ( $im ) {
 					ob_start(); imagepng( $im ); $photo_raw = (string) ob_get_clean(); imagedestroy( $im );
 				}
 			} else {
-				$photo_src = $photo_file;
+				$photo_src = $snapshot_file;
 			}
 		}
+
+		// No snapshot yet — use current photo and create the snapshot.
 		if ( ! $photo_src && ! $photo_raw ) {
-			$photo_url = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
-			if ( $photo_url ) {
-				$resp = wp_remote_get( $photo_url, array( 'timeout' => 5 ) );
-				if ( ! is_wp_error( $resp ) && 200 === (int) wp_remote_retrieve_response_code( $resp ) ) {
-					$body = wp_remote_retrieve_body( $resp );
-					$ct   = wp_remote_retrieve_header( $resp, 'content-type' );
-					if ( strpos( $ct, 'webp' ) !== false && function_exists( 'imagecreatefromstring' ) ) {
-						$im = @imagecreatefromstring( $body );
-						if ( $im ) { ob_start(); imagepng( $im ); $body = (string) ob_get_clean(); imagedestroy( $im ); }
+			$photo_id   = CP_LD_Photo_Manager::get_photo_id( $user_id );
+			$photo_file = $photo_id ? get_attached_file( $photo_id ) : '';
+			if ( $photo_file && file_exists( $photo_file ) ) {
+				$ext = strtolower( pathinfo( $photo_file, PATHINFO_EXTENSION ) );
+				if ( $ext === 'webp' && function_exists( 'imagecreatefromwebp' ) ) {
+					$im = @imagecreatefromwebp( $photo_file );
+					if ( $im ) {
+						ob_start(); imagepng( $im ); $photo_raw = (string) ob_get_clean(); imagedestroy( $im );
 					}
-					$photo_raw = $body;
+				} else {
+					$photo_src = $photo_file;
+				}
+			}
+			if ( ! $photo_src && ! $photo_raw ) {
+				$photo_url = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
+				if ( $photo_url ) {
+					$resp = wp_remote_get( $photo_url, array( 'timeout' => 5 ) );
+					if ( ! is_wp_error( $resp ) && 200 === (int) wp_remote_retrieve_response_code( $resp ) ) {
+						$body = wp_remote_retrieve_body( $resp );
+						$ct   = wp_remote_retrieve_header( $resp, 'content-type' );
+						if ( strpos( $ct, 'webp' ) !== false && function_exists( 'imagecreatefromstring' ) ) {
+							$im = @imagecreatefromstring( $body );
+							if ( $im ) { ob_start(); imagepng( $im ); $body = (string) ob_get_clean(); imagedestroy( $im ); }
+						}
+						$photo_raw = $body;
+					}
 				}
 			}
 		}
+
 		if ( $photo_src ) {
 			$pdf->Image( $photo_src, $photo_x, $photo_y, $photo_size, $photo_size, '', '', '', true, 150 );
-			self::snapshot_photo( $user_id, $post_id, $photo_src );
+			if ( ! $snapshot_file ) {
+				self::snapshot_photo( $user_id, $post_id, $photo_src );
+			}
 		} elseif ( $photo_raw ) {
 			$pdf->Image( '@' . $photo_raw, $photo_x, $photo_y, $photo_size, $photo_size );
-			self::snapshot_photo_from_raw( $user_id, $post_id, $photo_raw );
+			if ( ! $snapshot_file ) {
+				self::snapshot_photo_from_raw( $user_id, $post_id, $photo_raw );
+			}
 		}
 
 		// ---- QR code ----
@@ -155,9 +183,12 @@ class CP_LD_Certificate_Gate {
 		$post_id = self::detect_post_id();
 		if ( ! $user_id ) { return ''; }
 
-		// Photo
+		// Photo — prefer the frozen snapshot so the certificate keeps the original photo.
 		$photo_html = '';
-		$photo_url  = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
+		$photo_url  = self::get_snapshot_photo_url( $user_id, $post_id );
+		if ( ! $photo_url ) {
+			$photo_url = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
+		}
 		if ( $photo_url ) {
 			$photo_w    = ( null !== $atts['photo_size'] ) ? max( 40, (int) $atts['photo_size'] * 3 ) : 120;
 			$photo_html = '<img src="' . esc_url( $photo_url ) . '" class="cp-ld-photo" style="border-radius:50%;max-width:' . $photo_w . 'px;" />';
@@ -205,6 +236,18 @@ class CP_LD_Certificate_Gate {
 			$ext = 'png';
 		}
 		return $dir . '/' . (int) $user_id . '_' . (int) $post_id . '.' . $ext;
+	}
+
+	private static function get_snapshot_file( $user_id, $post_id ) {
+		$upload_dir = wp_upload_dir();
+		$dir        = $upload_dir['basedir'] . '/cp-ld-cert-photos';
+		$base       = $dir . '/' . (int) $user_id . '_' . (int) $post_id;
+		foreach ( array( 'jpg', 'jpeg', 'png', 'webp' ) as $ext ) {
+			if ( file_exists( $base . '.' . $ext ) ) {
+				return $base . '.' . $ext;
+			}
+		}
+		return false;
 	}
 
 	public static function get_snapshot_photo_url( $user_id, $post_id ) {

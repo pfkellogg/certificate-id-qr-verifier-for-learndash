@@ -15,13 +15,23 @@
 	var sourceSelect = document.getElementById('cp-ld-source');
 	var uploadRow    = document.getElementById('cp-ld-upload-row');
 	var hint         = document.getElementById('cp-ld-hint');
+	var fadeTimer    = null;
 
-	function showStatus(msg, type) {
+	function showStatus(msg, type, autoFade) {
+		if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+		status.classList.remove('cp-ld-status--fading');
 		status.textContent = msg;
 		status.className = 'cp-ld-status cp-ld-status--' + type;
+		if (autoFade) {
+			fadeTimer = setTimeout(function () {
+				status.classList.add('cp-ld-status--fading');
+				fadeTimer = setTimeout(hideStatus, 400);
+			}, 3000);
+		}
 	}
 
 	function hideStatus() {
+		if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
 		status.className = 'cp-ld-status';
 		status.textContent = '';
 	}
@@ -49,13 +59,13 @@
 					.then(function (res) {
 						if (res.success) {
 							showPhoto(res.data.photo_url || cpLd.gravatarUrl);
-							showStatus(res.data.message, 'ok');
+							showStatus(res.data.message, 'ok', true);
 						} else {
-							showStatus(res.data.message, 'error');
+							showStatus(res.data.message, 'error', true);
 						}
 					})
 					.catch(function () {
-						showStatus('Request failed.', 'error');
+						showStatus('Request failed.', 'error', true);
 					});
 			} else {
 				if (uploadRow) uploadRow.style.display = '';
@@ -87,7 +97,7 @@
 				.then(function (r) { return r.json(); })
 				.then(function (res) {
 					if (res.success) {
-						showStatus(res.data.message, 'ok');
+						showStatus(res.data.message, 'ok', true);
 						if (res.data.photo_url) {
 							showPhoto(res.data.photo_url);
 						}
@@ -95,11 +105,11 @@
 							sourceSelect.value = 'custom';
 						}
 					} else {
-						showStatus(res.data.message, 'error');
+						showStatus(res.data.message, 'error', true);
 					}
 				})
 				.catch(function () {
-					showStatus('Upload failed. Please try again.', 'error');
+					showStatus('Upload failed. Please try again.', 'error', true);
 				});
 		});
 	}

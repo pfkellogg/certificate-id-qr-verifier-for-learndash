@@ -219,6 +219,16 @@ class CP_LD_Photo_Manager {
 		update_user_meta( $user_id, self::LOG_META_KEY, $log );
 	}
 
+	public static function clear_cert_snapshots( $user_id ) {
+		$upload_dir = wp_upload_dir();
+		$dir        = $upload_dir['basedir'] . '/cp-ld-cert-photos';
+		if ( ! is_dir( $dir ) ) { return; }
+		$pattern = $dir . '/' . (int) $user_id . '_*';
+		foreach ( glob( $pattern ) as $file ) {
+			unlink( $file );
+		}
+	}
+
 	public static function get_log( $user_id ) {
 		$log = get_user_meta( $user_id, self::LOG_META_KEY, true );
 		return is_array( $log ) ? $log : array();
