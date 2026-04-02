@@ -33,8 +33,11 @@ Add this shortcode to your LearnDash certificate template. It places both the le
 | `qr_y`       | QR vertical position in mm from the top edge         | Bottom-right corner |
 | `qr_size`    | Width and height of the QR code in mm                | `32`                |
 | `label`      | Show "Scan to verify" text below the QR (`1` or `0`) | `1`                 |
+| `show_url`   | Show the verification URL below the QR code (`1` or `0`) | `0`             |
 
 If no attributes are provided, the photo and QR code are automatically positioned in opposite bottom corners with a 10 mm margin.
+
+When `show_url="1"`, the full verification URL is printed below the QR code on both the browser preview and the PDF. This provides a fallback for users without a QR code reader.
 
 ### Certificate ID
 
@@ -44,12 +47,12 @@ Outputs a unique certificate ID composed of a prefix, the completion timestamp, 
 [cp_ld_certificate_id prefix="CERT" x="20" y="150" size="4"]
 ```
 
-| Attribute | Description                                    | Default |
-| --------- | ---------------------------------------------- | ------- |
-| `prefix`  | Text prefix for the certificate ID             | `CERT`  |
-| `x`       | Horizontal position in mm from the left edge   | —       |
-| `y`       | Vertical position in mm from the top edge      | —       |
-| `size`    | Font size in mm                                | `12`    |
+| Attribute | Description                                  | Default |
+| --------- | -------------------------------------------- | ------- |
+| `prefix`  | Text prefix for the certificate ID           | `CERT`  |
+| `x`       | Horizontal position in mm from the left edge | —       |
+| `y`       | Vertical position in mm from the top edge    | —       |
+| `size`    | Font size in mm                              | `12`    |
 
 The generated ID follows the format `{PREFIX}-{timestamp}-{post_id}-{user_id}` (e.g. `CERT-1711929600-34179-42`). The timestamp is the Unix time of course, quiz, or group completion. The post ID is the course, quiz, or group ID. If `x` and `y` are omitted, the element is rendered inline without absolute positioning.
 
@@ -96,6 +99,7 @@ Admins can delete individual log entries or all entries at once from their own p
 
 Each certificate PDF includes a QR code that links to a public verification page. When scanned, the page displays:
 
+- The unique certificate ID (matching the ID on the PDF), shown prominently above the verification status
 - The learner's snapshot photo (matching the PDF), first and last name, and email
 - The course, quiz, or group title
 - Completion details (date, progress, score, pass/fail, etc.)
@@ -141,3 +145,7 @@ certificate-photo-verifier-ld/
 ```
 
 # certificate-photo-verifier-ld
+
+# example QR URL:
+
+http://localhost:10048/?cp_ld_verify=1&uid=3&cid=21&sig=2b1fd50a06bb0220c424

@@ -164,6 +164,12 @@ class CP_LD_Certificate_Gate {
 			$pdf->SetTextColor( 60, 60, 60 );
 			$pdf->SetXY( $qr_x, $qr_y + $qr_size + 1 );
 			$pdf->Cell( $qr_size, 8, __( 'Scan to verify', 'cp-ld' ), 0, 0, 'C' );
+			if ( ! empty( $sc['show_url'] ) ) {
+				$pdf->SetFont( 'helvetica', '', 9 );
+				$pdf->SetTextColor( 60, 60, 60 );
+				$pdf->SetXY( $qr_x, $qr_y + $qr_size + 7 );
+				$pdf->Cell( $qr_size, 5, $verify_url, 0, 0, 'C' );
+			}
 		}
 	}
 
@@ -180,6 +186,7 @@ class CP_LD_Certificate_Gate {
 			'qr_y'      => null,
 			'qr_size'    => null,
 			'label'      => 1,
+			'show_url'   => 0,
 		), $atts );
 
 		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
@@ -205,7 +212,11 @@ class CP_LD_Certificate_Gate {
 		if ( $atts['label'] ) {
 			$label_html = '<p class="cp-ld-qr-label" style="margin:4px 0 0;font-size:11px;color:#64748b;">' . esc_html__( 'Scan to verify', 'cp-ld' ) . '</p>';
 		}
-		$qr_html = '<div style="display:inline-block;text-align:center;">' . $svg . $label_html . '</div>';
+		$url_html = '';
+		if ( $atts['show_url'] ) {
+			$url_html = '<p class="cp-ld-qr-url" style="margin:6px 0 0;font-size:12px;color:#64748b;word-break:break-all;">' . esc_html( $verify_url ) . '</p>';
+		}
+		$qr_html = '<div style="display:inline-block;text-align:center;">' . $svg . $label_html . $url_html . '</div>';
 
 		return '<div class="cp-ld-cert-extras" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">'
 			. $photo_html . $qr_html
@@ -244,7 +255,7 @@ class CP_LD_Certificate_Gate {
 		return '<span class="cp-ld-certificate-id" style="' . esc_attr( $style ) . '">' . esc_html( $cert_id ) . '</span>';
 	}
 
-	private static function get_completion_timestamp( $user_id, $post_id ) {
+	public static function get_completion_timestamp( $user_id, $post_id ) {
 		$post_type = get_post_type( $post_id );
 
 		if ( 'sfwd-courses' === $post_type ) {
@@ -339,6 +350,7 @@ class CP_LD_Certificate_Gate {
 				'qr_x'      => 'qr_x',
 				'qr_y'      => 'qr_y',
 				'qr_size'   => 'qr_size',
+				'show_url'  => 'show_url',
 			);
 			foreach ( $map as $attr => $key ) {
 				if ( isset( $atts[ $attr ] ) && $atts[ $attr ] !== '' ) {

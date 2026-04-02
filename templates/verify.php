@@ -199,6 +199,15 @@
 			</div>
 		</div>
 
+		<!-- Certificate ID -->
+		<?php
+		$cert_timestamp = CP_LD_Certificate_Gate::get_completion_timestamp( $user_id, $course_id );
+		if ( $cert_timestamp ) : ?>
+		<div style="text-align:center;padding:14px 28px;border-bottom:1px solid #e8edf2;font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#1a202c;letter-spacing:.03em;">
+			<?php echo esc_html( 'CERT-' . $cert_timestamp . '-' . $course_id . '-' . $user_id ); ?>
+		</div>
+		<?php endif; ?>
+
 		<!-- Status -->
 		<div class="vc-status vc-status--valid">
 			<span class="vc-status__icon">✅</span>
