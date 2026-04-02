@@ -28,6 +28,7 @@ class CP_LD_Certificate_Gate {
 
 	public function gate_link( $url, $post_id, $user_id ) {
 		if ( empty( $url ) ) { return $url; }
+		if ( CP_LD_Settings::is_photo_bypassed() ) { return $url; }
 		if ( ! $user_id ) { $user_id = get_current_user_id(); }
 		if ( ! CP_LD_Photo_Manager::has_photo( $user_id ) ) { return $this->upload_url( $url ); }
 		return $url;
@@ -39,6 +40,7 @@ class CP_LD_Certificate_Gate {
 
 	public function block_direct_access() {
 		if ( empty( $_GET['cert-nonce'] ) ) { return; }
+		if ( CP_LD_Settings::is_photo_bypassed() ) { return; }
 		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
 		if ( ! CP_LD_Photo_Manager::has_photo( $user_id ) ) {
 			wp_safe_redirect( $this->upload_url() );
@@ -231,6 +233,7 @@ class CP_LD_Certificate_Gate {
 
 		$cert_id = strtoupper( sanitize_text_field( $atts['prefix'] ) )
 			. '-' . $timestamp
+			. '-' . $post_id
 			. '-' . $user_id;
 
 		$style = 'font-size:' . (int) $atts['size'] . 'mm;';

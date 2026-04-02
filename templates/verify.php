@@ -163,9 +163,13 @@
 	<div class="vc-body">
 
 	<?php if ( $valid && $user ) :
-		$photo_url = CP_LD_Certificate_Gate::get_snapshot_photo_url( $user->ID, $course_id );
-		if ( ! $photo_url ) {
-			$photo_url = CP_LD_Photo_Manager::get_photo_url( $user->ID, 'medium' );
+		$bypass_photo = CP_LD_Settings::is_photo_bypassed();
+		$photo_url    = '';
+		if ( ! $bypass_photo ) {
+			$photo_url = CP_LD_Certificate_Gate::get_snapshot_photo_url( $user->ID, $course_id );
+			if ( ! $photo_url ) {
+				$photo_url = CP_LD_Photo_Manager::get_photo_url( $user->ID, 'medium' );
+			}
 		}
 	?>
 
@@ -175,7 +179,7 @@
 				<img class="vc-photo"
 					src="<?php echo esc_url( $photo_url ); ?>"
 					alt="<?php echo esc_attr( $user->display_name ); ?>" />
-			<?php else : ?>
+			<?php elseif ( ! $bypass_photo ) : ?>
 				<div class="vc-no-photo" aria-hidden="true">👤</div>
 			<?php endif; ?>
 			<div>

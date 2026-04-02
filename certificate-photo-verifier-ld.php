@@ -24,12 +24,14 @@ require_once CP_LD_DIR . 'includes/class-certificate-gate.php';
 require_once CP_LD_DIR . 'includes/class-verification.php';
 require_once CP_LD_DIR . 'includes/class-admin.php';
 require_once CP_LD_DIR . 'includes/class-photo-block.php';
+require_once CP_LD_DIR . 'includes/class-settings.php';
 
 new CP_LD_Photo_Manager();
 new CP_LD_Certificate_Gate();
 new CP_LD_Verification();
 new CP_LD_Admin();
 new CP_LD_Photo_Block();
+new CP_LD_Settings();
 
 register_activation_hook( __FILE__, 'cp_ld_activate' );
 function cp_ld_activate() {

@@ -38,7 +38,7 @@ If no attributes are provided, the photo and QR code are automatically positione
 
 ### Certificate ID
 
-Outputs a unique certificate ID composed of a prefix, the completion timestamp, and the user ID.
+Outputs a unique certificate ID composed of a prefix, the completion timestamp, the post ID, and the user ID.
 
 ```
 [cp_ld_certificate_id prefix="CERT" x="20" y="150" size="4"]
@@ -51,7 +51,7 @@ Outputs a unique certificate ID composed of a prefix, the completion timestamp, 
 | `y`       | Vertical position in mm from the top edge      | —       |
 | `size`    | Font size in mm                                | `12`    |
 
-The generated ID follows the format `{PREFIX}-{timestamp}-{user_id}` (e.g. `CERT-1711929600-42`). The timestamp is the Unix time of course, quiz, or group completion. If `x` and `y` are omitted, the element is rendered inline without absolute positioning.
+The generated ID follows the format `{PREFIX}-{timestamp}-{post_id}-{user_id}` (e.g. `CERT-1711929600-34179-42`). The timestamp is the Unix time of course, quiz, or group completion. The post ID is the course, quiz, or group ID. If `x` and `y` are omitted, the element is rendered inline without absolute positioning.
 
 ## Gutenberg Block
 
