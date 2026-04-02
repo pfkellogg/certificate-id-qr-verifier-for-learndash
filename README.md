@@ -14,7 +14,9 @@ Requires a photo to view LearnDash certificates and adds a scannable QR code for
 2. Create a WordPress page and add the **Certificate Photo Upload** block (`cp-ld/photo-upload`). This is where learners are redirected when they need a photo.
 3. In your LearnDash certificate template, add the shortcode below to control where the photo and QR code appear on the PDF.
 
-## Shortcode
+## Shortcodes
+
+### Photo & QR Code
 
 Add this shortcode to your LearnDash certificate template. It places both the learner's photo and a QR verification code on the certificate PDF.
 
@@ -33,6 +35,23 @@ Add this shortcode to your LearnDash certificate template. It places both the le
 | `label`      | Show "Scan to verify" text below the QR (`1` or `0`) | `1`                 |
 
 If no attributes are provided, the photo and QR code are automatically positioned in opposite bottom corners with a 10 mm margin.
+
+### Certificate ID
+
+Outputs a unique certificate ID composed of a prefix, the completion timestamp, and the user ID.
+
+```
+[cp_ld_certificate_id prefix="CERT" x="20" y="150" size="4"]
+```
+
+| Attribute | Description                                    | Default |
+| --------- | ---------------------------------------------- | ------- |
+| `prefix`  | Text prefix for the certificate ID             | `CERT`  |
+| `x`       | Horizontal position in mm from the left edge   | —       |
+| `y`       | Vertical position in mm from the top edge      | —       |
+| `size`    | Font size in mm                                | `12`    |
+
+The generated ID follows the format `{PREFIX}-{timestamp}-{user_id}` (e.g. `CERT-1711929600-42`). The timestamp is the Unix time of course, quiz, or group completion. If `x` and `y` are omitted, the element is rendered inline without absolute positioning.
 
 ## Gutenberg Block
 
@@ -70,6 +89,8 @@ Every photo change (upload, revert to Gravatar) is logged as user meta. The log 
 - IP address
 
 Photo snapshots for the log are stored in `wp-content/uploads/cp-ld-photo-log/` so thumbnails remain visible even after the original attachment is replaced.
+
+Admins can delete individual log entries or all entries at once from their own profile. The delete buttons only appear when an admin is viewing their own user profile. Deleting a log entry also removes the associated snapshot files.
 
 ### QR Verification
 

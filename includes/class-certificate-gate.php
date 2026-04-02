@@ -19,6 +19,7 @@ class CP_LD_Certificate_Gate {
 		add_action( 'learndash_certification_content_write_cell_after', array( $this, 'draw_on_pdf' ), 10, 2 );
 		add_action( 'learndash_delete_user_data', array( $this, 'on_course_data_deleted' ) );
 		add_shortcode( 'cp_ld_certificate', array( $this, 'certificate_shortcode' ) );
+		add_shortcode( 'cp_ld_certificate_id', array( $this, 'certificate_id_shortcode' ) );
 	}
 
 	public function on_course_data_deleted( $user_id ) {
@@ -207,6 +208,62 @@ class CP_LD_Certificate_Gate {
 		return '<div class="cp-ld-cert-extras" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">'
 			. $photo_html . $qr_html
 			. '</div>';
+	}
+
+	// -----------------------------------------------------------------------
+	// Certificate ID shortcode — unique ID from prefix + timestamp + user ID
+	// -----------------------------------------------------------------------
+
+	public function certificate_id_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'prefix' => 'CERT',
+			'x'      => null,
+			'y'      => null,
+			'size'   => 12,
+		), $atts );
+
+		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
+		$post_id = self::detect_post_id();
+		if ( ! $user_id || ! $post_id ) { return ''; }
+
+		$timestamp = self::get_completion_timestamp( $user_id, $post_id );
+		if ( ! $timestamp ) { return ''; }
+
+		$cert_id = strtoupper( sanitize_text_field( $atts['prefix'] ) )
+			. '-' . $timestamp
+			. '-' . $user_id;
+
+		$style = 'font-size:' . (int) $atts['size'] . 'mm;';
+		if ( null !== $atts['x'] && null !== $atts['y'] ) {
+			$style .= 'position:absolute;left:' . (int) $atts['x'] . 'mm;top:' . (int) $atts['y'] . 'mm;';
+		}
+
+		return '<span class="cp-ld-certificate-id" style="' . esc_attr( $style ) . '">' . esc_html( $cert_id ) . '</span>';
+	}
+
+	private static function get_completion_timestamp( $user_id, $post_id ) {
+		$post_type = get_post_type( $post_id );
+
+		if ( 'sfwd-courses' === $post_type ) {
+			return (int) get_user_meta( $user_id, 'course_completed_' . $post_id, true );
+		}
+
+		if ( 'groups' === $post_type ) {
+			return (int) get_user_meta( $user_id, 'learndash_group_completed_' . $post_id, true );
+		}
+
+		if ( 'sfwd-quiz' === $post_type ) {
+			$attempts = get_user_meta( $user_id, '_sfwd-quizzes', true );
+			if ( is_array( $attempts ) ) {
+				foreach ( array_reverse( $attempts ) as $attempt ) {
+					if ( isset( $attempt['quiz'] ) && (int) $attempt['quiz'] === $post_id && ! empty( $attempt['time'] ) ) {
+						return (int) $attempt['time'];
+					}
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	// -----------------------------------------------------------------------

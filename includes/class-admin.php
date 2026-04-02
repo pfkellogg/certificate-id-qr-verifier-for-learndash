@@ -18,6 +18,10 @@ class CP_LD_Admin {
 		add_action( 'personal_options_update',  array( $this, 'save_photo_field' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'save_photo_field' ) );
 
+		// Delete own log entries (admins only).
+		add_action( 'wp_ajax_cp_ld_delete_log_entry',       array( $this, 'ajax_delete_log_entry' ) );
+		add_action( 'wp_ajax_cp_ld_delete_all_log_entries',  array( $this, 'ajax_delete_all_log_entries' ) );
+
 		// Frontend notice when photo is missing.
 		add_action( 'wp_head', array( $this, 'maybe_notice' ) );
 	}
@@ -74,6 +78,7 @@ class CP_LD_Admin {
 					</div>
 					<?php
 					$log = CP_LD_Photo_Manager::get_log( $user->ID );
+					$can_delete_log = current_user_can( 'manage_options' ) && $user->ID === get_current_user_id();
 					if ( ! empty( $log ) ) :
 						$log = array_reverse( $log );
 					?>
@@ -89,12 +94,25 @@ class CP_LD_Admin {
 										<th style="padding:10px 12px;"><?php esc_html_e( 'New', 'cp-ld' ); ?></th>
 										<th style="padding:10px 12px;"><?php esc_html_e( 'By', 'cp-ld' ); ?></th>
 										<th style="padding:10px 12px;"><?php esc_html_e( 'IP', 'cp-ld' ); ?></th>
+										<?php if ( $can_delete_log ) : ?>
+											<th style="padding:10px 12px;"></th>
+										<?php endif; ?>
 									</tr>
 								</thead>
 								<tbody>
-								<?php foreach ( array_slice( $log, 0, 20 ) as $entry ) :
+								<?php $gravatar_thumb = CP_LD_Photo_Manager::get_gravatar_url( $user->ID, 'thumbnail' ); ?>
+								<?php foreach ( array_slice( $log, 0, 20 ) as $display_idx => $entry ) :
+									$original_idx = count( $log ) - 1 - $display_idx;
 									$old_snap_url = ! empty( $entry['old_snapshot'] ) ? CP_LD_Photo_Manager::get_log_snapshot_url( $entry['old_snapshot'] ) : '';
 									$new_snap_url = ! empty( $entry['new_snapshot'] ) ? CP_LD_Photo_Manager::get_log_snapshot_url( $entry['new_snapshot'] ) : '';
+
+									// Fall back to gravatar when no snapshot exists.
+									if ( ! $old_snap_url && $gravatar_thumb && $entry['action'] === 'upload' && empty( $entry['old_id'] ) ) {
+										$old_snap_url = $gravatar_thumb;
+									}
+									if ( ! $new_snap_url && $gravatar_thumb && $entry['action'] === 'revert_gravatar' ) {
+										$new_snap_url = $gravatar_thumb;
+									}
 								?>
 									<tr>
 										<td style="padding:8px 12px;"><?php echo esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $entry['time'] ) ); ?></td>
@@ -121,6 +139,11 @@ class CP_LD_Admin {
 										</td>
 										<td style="padding:8px 12px;"><?php echo esc_html( $entry['changed_by'] === 'admin' ? __( 'Admin', 'cp-ld' ) : __( 'Self', 'cp-ld' ) ); ?></td>
 										<td style="padding:8px 12px;"><code style="font-size:12px;"><?php echo esc_html( $entry['ip'] ); ?></code></td>
+										<?php if ( $can_delete_log ) : ?>
+											<td style="padding:8px 12px;">
+												<button type="button" class="button-link cp-ld-delete-log-entry" data-index="<?php echo esc_attr( $original_idx ); ?>" style="color:#b91c1c;font-size:12px;"><?php esc_html_e( 'Delete', 'cp-ld' ); ?></button>
+											</td>
+										<?php endif; ?>
 									</tr>
 								<?php endforeach; ?>
 								</tbody>
@@ -130,7 +153,51 @@ class CP_LD_Admin {
 									<?php printf( esc_html__( 'Showing 20 of %d entries.', 'cp-ld' ), count( $log ) ); ?>
 								</p>
 							<?php endif; ?>
+							<?php if ( $can_delete_log ) : ?>
+								<p style="margin-top:8px;">
+									<button type="button" id="cp-ld-delete-all-log" class="button" style="color:#b91c1c;border-color:#b91c1c;"><?php esc_html_e( 'Delete All Log Entries', 'cp-ld' ); ?></button>
+								</p>
+							<?php endif; ?>
 						</div>
+					<?php endif; ?>
+
+					<?php if ( $can_delete_log && ! empty( $log ) ) : ?>
+					<script>
+					(function(){
+						var nonce = <?php echo wp_json_encode( wp_create_nonce( 'cp_ld_delete_log' ) ); ?>;
+						var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
+						document.querySelectorAll('.cp-ld-delete-log-entry').forEach(function(btn){
+							btn.addEventListener('click', function(){
+								if (!confirm(<?php echo wp_json_encode( __( 'Delete this log entry?', 'cp-ld' ) ); ?>)) return;
+								var row = btn.closest('tr');
+								btn.disabled = true;
+								btn.textContent = '…';
+								var xhr = new XMLHttpRequest();
+								xhr.open('POST', ajaxUrl);
+								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+								xhr.onload = function(){
+									if (xhr.status === 200) { row.remove(); } else { btn.disabled = false; btn.textContent = <?php echo wp_json_encode( __( 'Delete', 'cp-ld' ) ); ?>; }
+								};
+								xhr.send('action=cp_ld_delete_log_entry&nonce='+encodeURIComponent(nonce)+'&index='+encodeURIComponent(btn.dataset.index));
+							});
+						});
+						var delAll = document.getElementById('cp-ld-delete-all-log');
+						if (delAll) {
+							delAll.addEventListener('click', function(){
+								if (!confirm(<?php echo wp_json_encode( __( 'Delete ALL log entries? This cannot be undone.', 'cp-ld' ) ); ?>)) return;
+								delAll.disabled = true;
+								delAll.textContent = '…';
+								var xhr = new XMLHttpRequest();
+								xhr.open('POST', ajaxUrl);
+								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+								xhr.onload = function(){
+									if (xhr.status === 200) { delAll.closest('div').remove(); } else { delAll.disabled = false; delAll.textContent = <?php echo wp_json_encode( __( 'Delete All Log Entries', 'cp-ld' ) ); ?>; }
+								};
+								xhr.send('action=cp_ld_delete_all_log_entries&nonce='+encodeURIComponent(nonce));
+							});
+						}
+					})();
+					</script>
 					<?php endif; ?>
 
 					<?php if ( $has_gravatar ) : ?>
@@ -206,6 +273,74 @@ class CP_LD_Admin {
 				CP_LD_Photo_Manager::log_change( $user_id, 'upload', $old, $id, 'admin', $old_snapshot, $new_snapshot );
 			}
 		}
+	}
+
+	// -----------------------------------------------------------------------
+	// Delete own log entry (admins only)
+	// -----------------------------------------------------------------------
+
+	public function ajax_delete_log_entry() {
+		check_ajax_referer( 'cp_ld_delete_log', 'nonce' );
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id || ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'cp-ld' ) ) );
+		}
+
+		$index = isset( $_POST['index'] ) ? (int) $_POST['index'] : -1;
+		$log   = CP_LD_Photo_Manager::get_log( $user_id );
+
+		if ( $index < 0 || $index >= count( $log ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid entry.', 'cp-ld' ) ) );
+		}
+
+		// Clean up snapshot files for the deleted entry.
+		$entry = $log[ $index ];
+		if ( ! empty( $entry['old_snapshot'] ) ) {
+			$upload_dir = wp_upload_dir();
+			$path = $upload_dir['basedir'] . '/cp-ld-photo-log/' . $entry['old_snapshot'];
+			if ( file_exists( $path ) ) { unlink( $path ); }
+		}
+		if ( ! empty( $entry['new_snapshot'] ) ) {
+			$upload_dir = isset( $upload_dir ) ? $upload_dir : wp_upload_dir();
+			$path = $upload_dir['basedir'] . '/cp-ld-photo-log/' . $entry['new_snapshot'];
+			if ( file_exists( $path ) ) { unlink( $path ); }
+		}
+
+		array_splice( $log, $index, 1 );
+		update_user_meta( $user_id, CP_LD_Photo_Manager::LOG_META_KEY, $log );
+
+		wp_send_json_success();
+	}
+
+	public function ajax_delete_all_log_entries() {
+		check_ajax_referer( 'cp_ld_delete_log', 'nonce' );
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id || ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'cp-ld' ) ) );
+		}
+
+		$log = CP_LD_Photo_Manager::get_log( $user_id );
+
+		// Clean up all snapshot files.
+		if ( ! empty( $log ) ) {
+			$upload_dir = wp_upload_dir();
+			$dir        = $upload_dir['basedir'] . '/cp-ld-photo-log';
+			foreach ( $log as $entry ) {
+				if ( ! empty( $entry['old_snapshot'] ) ) {
+					$path = $dir . '/' . $entry['old_snapshot'];
+					if ( file_exists( $path ) ) { unlink( $path ); }
+				}
+				if ( ! empty( $entry['new_snapshot'] ) ) {
+					$path = $dir . '/' . $entry['new_snapshot'];
+					if ( file_exists( $path ) ) { unlink( $path ); }
+				}
+			}
+		}
+
+		delete_user_meta( $user_id, CP_LD_Photo_Manager::LOG_META_KEY );
+		wp_send_json_success();
 	}
 
 	// -----------------------------------------------------------------------
