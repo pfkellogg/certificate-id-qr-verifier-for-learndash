@@ -64,8 +64,8 @@ class CP_LD_Settings {
 
 		$page     = isset( $_POST['page'] )     ? max( 1, (int) $_POST['page'] ) : 1;
 		$per_page = isset( $_POST['per_page'] )  ? max( 1, min( 50, (int) $_POST['per_page'] ) ) : 10;
-		$sort     = isset( $_POST['sort'] )      ? sanitize_text_field( $_POST['sort'] ) : 'recent';
-		$search   = isset( $_POST['search'] )    ? sanitize_text_field( $_POST['search'] ) : '';
+		$sort     = isset( $_POST['sort'] )      ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'recent';
+		$search   = isset( $_POST['search'] )    ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
 
 		// Get all user IDs that have a photo log.
 		$meta_query_args = array(
@@ -226,11 +226,11 @@ class CP_LD_Settings {
 			foreach ( $log as $entry ) {
 				if ( ! empty( $entry['old_snapshot'] ) ) {
 					$path = $dir . '/' . $entry['old_snapshot'];
-					if ( file_exists( $path ) ) { unlink( $path ); }
+					wp_delete_file( $path );
 				}
 				if ( ! empty( $entry['new_snapshot'] ) ) {
 					$path = $dir . '/' . $entry['new_snapshot'];
-					if ( file_exists( $path ) ) { unlink( $path ); }
+					wp_delete_file( $path );
 				}
 			}
 		}
@@ -717,9 +717,9 @@ class CP_LD_Settings {
 				viewProfile: <?php echo wp_json_encode( __( 'View', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				prev:      <?php echo wp_json_encode( __( 'Previous', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				next:      <?php echo wp_json_encode( __( 'Next', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				showing:   <?php echo wp_json_encode( __( 'Showing %1$s of %2$s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				showing:   <?php /* translators: 1: users shown, 2: all users */ echo wp_json_encode( __( 'Showing %1$s of %2$s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				noResults: <?php echo wp_json_encode( __( 'No photo changes found.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				usersWithChanges: <?php echo wp_json_encode( __( '%s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				usersWithChanges: <?php /* translators: %s: a number of users */ echo wp_json_encode( __( '%s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				dash:      '&mdash;',
 				deleteBtn:     <?php echo wp_json_encode( __( 'Delete History', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				deleteTitle:   <?php echo wp_json_encode( __( 'Delete all photo change history?', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,

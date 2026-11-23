@@ -435,6 +435,10 @@ class CP_LD_Certificate_Gate {
 
 	private function upload_url( $return_url = '' ) {
 		global $wpdb;
+		// The page with the photo upload block, looked up once an hour at most.
+		$page_id = (int) get_transient( 'cp_ld_upload_page' );
+		if ( ! $page_id ) {
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- cached in a transient just above.
 		$page_id = (int) $wpdb->get_var(
 			"SELECT ID FROM {$wpdb->posts}
 			 WHERE post_type = 'page'
@@ -442,6 +446,8 @@ class CP_LD_Certificate_Gate {
 			   AND post_content LIKE '%<!-- wp:cp-ld/photo-upload%'
 			 LIMIT 1"
 		);
+		set_transient( 'cp_ld_upload_page', $page_id, HOUR_IN_SECONDS );
+		}
 		if ( $page_id ) {
 			$args = array( 'cp_ld_notice' => 'photo_required' );
 			if ( $return_url ) {

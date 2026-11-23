@@ -150,7 +150,7 @@ class CP_LD_Admin {
 							</table>
 							<?php if ( count( $log ) > 20 ) : ?>
 								<p style="color:#64748b;font-size:12px;margin-top:4px;">
-									<?php printf( esc_html__( 'Showing 20 of %d entries.', 'certificate-id-qr-verifier-for-learndash' ), count( $log ) ); ?>
+									<?php /* translators: %d: all the log entries */ printf( esc_html__( 'Showing 20 of %d entries.', 'certificate-id-qr-verifier-for-learndash' ), count( $log ) ); ?>
 								</p>
 							<?php endif; ?>
 							<?php if ( $can_delete_log ) : ?>
@@ -299,12 +299,12 @@ class CP_LD_Admin {
 		if ( ! empty( $entry['old_snapshot'] ) ) {
 			$upload_dir = wp_upload_dir();
 			$path = $upload_dir['basedir'] . '/cp-ld-photo-log/' . $entry['old_snapshot'];
-			if ( file_exists( $path ) ) { unlink( $path ); }
+			wp_delete_file( $path );
 		}
 		if ( ! empty( $entry['new_snapshot'] ) ) {
 			$upload_dir = isset( $upload_dir ) ? $upload_dir : wp_upload_dir();
 			$path = $upload_dir['basedir'] . '/cp-ld-photo-log/' . $entry['new_snapshot'];
-			if ( file_exists( $path ) ) { unlink( $path ); }
+			wp_delete_file( $path );
 		}
 
 		array_splice( $log, $index, 1 );
@@ -330,11 +330,11 @@ class CP_LD_Admin {
 			foreach ( $log as $entry ) {
 				if ( ! empty( $entry['old_snapshot'] ) ) {
 					$path = $dir . '/' . $entry['old_snapshot'];
-					if ( file_exists( $path ) ) { unlink( $path ); }
+					wp_delete_file( $path );
 				}
 				if ( ! empty( $entry['new_snapshot'] ) ) {
 					$path = $dir . '/' . $entry['new_snapshot'];
-					if ( file_exists( $path ) ) { unlink( $path ); }
+					wp_delete_file( $path );
 				}
 			}
 		}

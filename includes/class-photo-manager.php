@@ -102,6 +102,7 @@ class CP_LD_Photo_Manager {
 		if ( empty( $_FILES['cp_ld_photo'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'No file received.', 'certificate-id-qr-verifier-for-learndash' ) ) );
 		}
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- an upload: its real type is checked below, and WordPress stores it.
 		$file     = $_FILES['cp_ld_photo'];
 		$allowed  = array( 'image/jpeg', 'image/png', 'image/webp' );
 		$finfo    = finfo_open( FILEINFO_MIME_TYPE );
@@ -225,7 +226,7 @@ class CP_LD_Photo_Manager {
 		if ( ! is_dir( $dir ) ) { return; }
 		$pattern = $dir . '/' . (int) $user_id . '_*';
 		foreach ( glob( $pattern ) as $file ) {
-			unlink( $file );
+			wp_delete_file( $file );
 		}
 	}
 
@@ -238,7 +239,11 @@ class CP_LD_Photo_Manager {
 		$user_id = get_current_user_id();
 		wp_enqueue_style( 'cp-ld-frontend', CP_LD_URL . 'assets/css/frontend.css', array(), CP_LD_VERSION );
 		wp_enqueue_script( 'cp-ld-frontend', CP_LD_URL . 'assets/js/frontend.js', array(), CP_LD_VERSION, true );
-		$return_url = isset( $_GET['cp_ld_return'] ) ? esc_url_raw( rawurldecode( $_GET['cp_ld_return'] ) ) : '';
+		// Where "Continue" goes after the upload: only a page on this site (an outside address would let anyone send
+		// learners from this upload page to their own site).
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a link back, checked to stay on this site.
+		$return_url = isset( $_GET['cp_ld_return'] ) ? esc_url_raw( rawurldecode( sanitize_text_field( wp_unslash( $_GET['cp_ld_return'] ) ) ) ) : '';
+		$return_url = $return_url ? wp_validate_redirect( $return_url, '' ) : '';
 		wp_localize_script( 'cp-ld-frontend', 'cpLd', array(
 			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
 			'nonce'        => wp_create_nonce( 'cp_ld_photo_nonce' ),

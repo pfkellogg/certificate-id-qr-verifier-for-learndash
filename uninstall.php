@@ -9,3 +9,4 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 delete_option( 'cp_ld_bypass_photo' );
 delete_metadata( 'user', 0, '_cp_ld_photo_id', '', true );
 delete_metadata( 'user', 0, '_cp_ld_photo_log', '', true );
+delete_transient( 'cp_ld_upload_page' );

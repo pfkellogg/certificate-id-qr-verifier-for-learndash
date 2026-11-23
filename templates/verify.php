@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -7,6 +12,7 @@
 		<?php
 		if ( $valid && $user ) {
 			printf(
+				/* translators: %s: the site's name */
 				esc_html__( 'Certificate Verification — %s', 'certificate-id-qr-verifier-for-learndash' ),
 				esc_html( $user->display_name )
 			);
@@ -191,6 +197,7 @@
 				<div class="vc-identity__since">
 					<?php
 					printf(
+						/* translators: %s: the date the learner joined */
 						esc_html__( 'Member since %s', 'certificate-id-qr-verifier-for-learndash' ),
 						esc_html( date_i18n( get_option( 'date_format' ), strtotime( $user->user_registered ) ) )
 					);
@@ -383,6 +390,7 @@
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
 		&nbsp;·&nbsp;
 		<?php printf(
+			/* translators: %s: the date and time of this check */
 			esc_html__( 'Verified on %s', 'certificate-id-qr-verifier-for-learndash' ),
 			esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) )
 		); ?>
