@@ -90,10 +90,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			font-size: 15px; font-weight: 700;
 			border-bottom: 1px solid #e8edf2;
 		}
-		.vc-status--valid   { background: #ecfdf5; color: #065f46; }
+		.vc-status--valid   { background: #ecfdf5; color: #065f46; flex-wrap: wrap; }
 		.vc-status--invalid { background: #fef2f2; color: #7f1d1d; }
 		.vc-status--expired { background: #fffbeb; color: #78350f; flex-wrap: wrap; }
-		.vc-status__note    { flex-basis: 100%; font-size: 13px; font-weight: 400; }
+		.vc-status__note    { flex-basis: 100%; font-size: 13px; font-weight: 400; text-align: center; }
 		.vc-status__icon    { font-size: 20px; }
 
 		/* ---- Sections ---- */
