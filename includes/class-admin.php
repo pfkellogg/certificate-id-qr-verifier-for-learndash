@@ -47,10 +47,10 @@ class CP_LD_Admin {
 			if (f) f.enctype = 'multipart/form-data';
 		})();
 		</script>
-		<h3 id="cp-ld-photo"><?php esc_html_e( 'Certificate Photo', 'cp-ld' ); ?></h3>
+		<h3 id="cp-ld-photo"><?php esc_html_e( 'Certificate Photo', 'certificate-id-qr-verifier-for-learndash' ); ?></h3>
 		<table class="form-table">
 			<tr>
-				<th><?php esc_html_e( 'Photo', 'cp-ld' ); ?></th>
+				<th><?php esc_html_e( 'Photo', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
 				<td>
 					<?php if ( $photo_url ) : ?>
 						<img id="cp-ld-profile-preview" src="<?php echo esc_url( $photo_url ); ?>"
@@ -62,10 +62,10 @@ class CP_LD_Admin {
 					<?php if ( $has_gravatar ) : ?>
 						<p style="margin-bottom:8px;">
 							<label>
-								<strong><?php esc_html_e( 'Photo source:', 'cp-ld' ); ?></strong>&nbsp;
+								<strong><?php esc_html_e( 'Photo source:', 'certificate-id-qr-verifier-for-learndash' ); ?></strong>&nbsp;
 								<select name="cp_ld_photo_source" style="min-width:180px;">
-									<option value="gravatar" <?php selected( $source, 'gravatar' ); ?>><?php esc_html_e( 'Gravatar', 'cp-ld' ); ?></option>
-									<option value="custom" <?php selected( $source, 'custom' ); ?>><?php esc_html_e( 'Custom Photo', 'cp-ld' ); ?></option>
+									<option value="gravatar" <?php selected( $source, 'gravatar' ); ?>><?php esc_html_e( 'Gravatar', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
+									<option value="custom" <?php selected( $source, 'custom' ); ?>><?php esc_html_e( 'Custom Photo', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
 								</select>
 							</label>
 						</p>
@@ -74,7 +74,7 @@ class CP_LD_Admin {
 					<div id="cp-ld-profile-upload-row">
 						<input type="file" name="cp_ld_photo" id="cp-ld-profile-file"
 							accept="image/jpeg,image/png,image/webp" />
-						<p class="description"><?php esc_html_e( 'JPEG, PNG, or WebP. Max 5 MB. Upload a file to use a custom photo.', 'cp-ld' ); ?></p>
+						<p class="description"><?php esc_html_e( 'JPEG, PNG, or WebP. Max 5 MB. Upload a file to use a custom photo.', 'certificate-id-qr-verifier-for-learndash' ); ?></p>
 					</div>
 					<?php
 					$log = CP_LD_Photo_Manager::get_log( $user->ID );
@@ -83,17 +83,17 @@ class CP_LD_Admin {
 						$log = array_reverse( $log );
 					?>
 						<div style="margin-top:16px;">
-							<strong><?php esc_html_e( 'Photo Change Log', 'cp-ld' ); ?></strong>
-							<span style="color:#64748b;font-size:12px;">(<?php echo esc_html( count( $log ) ); ?> <?php esc_html_e( 'total changes', 'cp-ld' ); ?>)</span>
+							<strong><?php esc_html_e( 'Photo Change Log', 'certificate-id-qr-verifier-for-learndash' ); ?></strong>
+							<span style="color:#64748b;font-size:12px;">(<?php echo esc_html( count( $log ) ); ?> <?php esc_html_e( 'total changes', 'certificate-id-qr-verifier-for-learndash' ); ?>)</span>
 							<table class="widefat striped" style="margin-top:8px;max-width:800px;">
 								<thead>
 									<tr>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'Date', 'cp-ld' ); ?></th>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'Action', 'cp-ld' ); ?></th>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'Previous', 'cp-ld' ); ?></th>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'New', 'cp-ld' ); ?></th>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'By', 'cp-ld' ); ?></th>
-										<th style="padding:10px 12px;"><?php esc_html_e( 'IP', 'cp-ld' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'Date', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'Action', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'Previous', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'New', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'By', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
+										<th style="padding:10px 12px;"><?php esc_html_e( 'IP', 'certificate-id-qr-verifier-for-learndash' ); ?></th>
 										<?php if ( $can_delete_log ) : ?>
 											<th style="padding:10px 12px;"></th>
 										<?php endif; ?>
@@ -118,9 +118,9 @@ class CP_LD_Admin {
 										<td style="padding:8px 12px;"><?php echo esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $entry['time'] ) ); ?></td>
 										<td style="padding:8px 12px;"><?php
 										switch ( $entry['action'] ) {
-											case 'upload':           esc_html_e( 'Uploaded', 'cp-ld' ); break;
-											case 'revert_gravatar':  esc_html_e( 'Reverted to Gravatar', 'cp-ld' ); break;
-											default:                 esc_html_e( 'Deleted', 'cp-ld' ); break;
+											case 'upload':           esc_html_e( 'Uploaded', 'certificate-id-qr-verifier-for-learndash' ); break;
+											case 'revert_gravatar':  esc_html_e( 'Reverted to Gravatar', 'certificate-id-qr-verifier-for-learndash' ); break;
+											default:                 esc_html_e( 'Deleted', 'certificate-id-qr-verifier-for-learndash' ); break;
 										}
 									?></td>
 										<td style="padding:8px 12px;">
@@ -137,11 +137,11 @@ class CP_LD_Admin {
 												<span style="color:#94a3b8;font-size:12px;">&mdash;</span>
 											<?php endif; ?>
 										</td>
-										<td style="padding:8px 12px;"><?php echo esc_html( $entry['changed_by'] === 'admin' ? __( 'Admin', 'cp-ld' ) : __( 'Self', 'cp-ld' ) ); ?></td>
+										<td style="padding:8px 12px;"><?php echo esc_html( $entry['changed_by'] === 'admin' ? __( 'Admin', 'certificate-id-qr-verifier-for-learndash' ) : __( 'Self', 'certificate-id-qr-verifier-for-learndash' ) ); ?></td>
 										<td style="padding:8px 12px;"><code style="font-size:12px;"><?php echo esc_html( $entry['ip'] ); ?></code></td>
 										<?php if ( $can_delete_log ) : ?>
 											<td style="padding:8px 12px;">
-												<button type="button" class="button-link cp-ld-delete-log-entry" data-index="<?php echo esc_attr( $original_idx ); ?>" style="color:#b91c1c;font-size:12px;"><?php esc_html_e( 'Delete', 'cp-ld' ); ?></button>
+												<button type="button" class="button-link cp-ld-delete-log-entry" data-index="<?php echo esc_attr( $original_idx ); ?>" style="color:#b91c1c;font-size:12px;"><?php esc_html_e( 'Delete', 'certificate-id-qr-verifier-for-learndash' ); ?></button>
 											</td>
 										<?php endif; ?>
 									</tr>
@@ -150,12 +150,12 @@ class CP_LD_Admin {
 							</table>
 							<?php if ( count( $log ) > 20 ) : ?>
 								<p style="color:#64748b;font-size:12px;margin-top:4px;">
-									<?php printf( esc_html__( 'Showing 20 of %d entries.', 'cp-ld' ), count( $log ) ); ?>
+									<?php printf( esc_html__( 'Showing 20 of %d entries.', 'certificate-id-qr-verifier-for-learndash' ), count( $log ) ); ?>
 								</p>
 							<?php endif; ?>
 							<?php if ( $can_delete_log ) : ?>
 								<p style="margin-top:8px;">
-									<button type="button" id="cp-ld-delete-all-log" class="button" style="color:#b91c1c;border-color:#b91c1c;"><?php esc_html_e( 'Delete All Log Entries', 'cp-ld' ); ?></button>
+									<button type="button" id="cp-ld-delete-all-log" class="button" style="color:#b91c1c;border-color:#b91c1c;"><?php esc_html_e( 'Delete All Log Entries', 'certificate-id-qr-verifier-for-learndash' ); ?></button>
 								</p>
 							<?php endif; ?>
 						</div>
@@ -168,7 +168,7 @@ class CP_LD_Admin {
 						var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
 						document.querySelectorAll('.cp-ld-delete-log-entry').forEach(function(btn){
 							btn.addEventListener('click', function(){
-								if (!confirm(<?php echo wp_json_encode( __( 'Delete this log entry?', 'cp-ld' ) ); ?>)) return;
+								if (!confirm(<?php echo wp_json_encode( __( 'Delete this log entry?', 'certificate-id-qr-verifier-for-learndash' ) ); ?>)) return;
 								var row = btn.closest('tr');
 								btn.disabled = true;
 								btn.textContent = '…';
@@ -176,7 +176,7 @@ class CP_LD_Admin {
 								xhr.open('POST', ajaxUrl);
 								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 								xhr.onload = function(){
-									if (xhr.status === 200) { row.remove(); } else { btn.disabled = false; btn.textContent = <?php echo wp_json_encode( __( 'Delete', 'cp-ld' ) ); ?>; }
+									if (xhr.status === 200) { row.remove(); } else { btn.disabled = false; btn.textContent = <?php echo wp_json_encode( __( 'Delete', 'certificate-id-qr-verifier-for-learndash' ) ); ?>; }
 								};
 								xhr.send('action=cp_ld_delete_log_entry&nonce='+encodeURIComponent(nonce)+'&index='+encodeURIComponent(btn.dataset.index));
 							});
@@ -184,14 +184,14 @@ class CP_LD_Admin {
 						var delAll = document.getElementById('cp-ld-delete-all-log');
 						if (delAll) {
 							delAll.addEventListener('click', function(){
-								if (!confirm(<?php echo wp_json_encode( __( 'Delete ALL log entries? This cannot be undone.', 'cp-ld' ) ); ?>)) return;
+								if (!confirm(<?php echo wp_json_encode( __( 'Delete ALL log entries? This cannot be undone.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>)) return;
 								delAll.disabled = true;
 								delAll.textContent = '…';
 								var xhr = new XMLHttpRequest();
 								xhr.open('POST', ajaxUrl);
 								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 								xhr.onload = function(){
-									if (xhr.status === 200) { delAll.closest('div').remove(); } else { delAll.disabled = false; delAll.textContent = <?php echo wp_json_encode( __( 'Delete All Log Entries', 'cp-ld' ) ); ?>; }
+									if (xhr.status === 200) { delAll.closest('div').remove(); } else { delAll.disabled = false; delAll.textContent = <?php echo wp_json_encode( __( 'Delete All Log Entries', 'certificate-id-qr-verifier-for-learndash' ) ); ?>; }
 								};
 								xhr.send('action=cp_ld_delete_all_log_entries&nonce='+encodeURIComponent(nonce));
 							});
@@ -284,14 +284,14 @@ class CP_LD_Admin {
 
 		$user_id = get_current_user_id();
 		if ( ! $user_id || ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'cp-ld' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		$index = isset( $_POST['index'] ) ? (int) $_POST['index'] : -1;
 		$log   = CP_LD_Photo_Manager::get_log( $user_id );
 
 		if ( $index < 0 || $index >= count( $log ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid entry.', 'cp-ld' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid entry.', 'certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		// Clean up snapshot files for the deleted entry.
@@ -318,7 +318,7 @@ class CP_LD_Admin {
 
 		$user_id = get_current_user_id();
 		if ( ! $user_id || ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'cp-ld' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		$log = CP_LD_Photo_Manager::get_log( $user_id );
@@ -352,7 +352,7 @@ class CP_LD_Admin {
 			echo '<script>document.addEventListener("DOMContentLoaded",function(){'
 				. 'var n=document.createElement("div");'
 				. 'n.className="cp-ld-notice-bar";'
-				. 'n.innerHTML=' . wp_json_encode( '<strong>' . esc_html__( 'A certificate photo is required before you can download your certificate.', 'cp-ld' ) . '</strong>' ) . ';'
+				. 'n.innerHTML=' . wp_json_encode( '<strong>' . esc_html__( 'A certificate photo is required before you can download your certificate.', 'certificate-id-qr-verifier-for-learndash' ) . '</strong>' ) . ';'
 				. 'document.body.prepend(n);'
 				. '});</script>';
 		}

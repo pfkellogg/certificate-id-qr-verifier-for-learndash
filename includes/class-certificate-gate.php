@@ -41,7 +41,7 @@ class CP_LD_Certificate_Gate {
 	public function block_direct_access() {
 		if ( empty( $_GET['cert-nonce'] ) ) { return; }
 		if ( CP_LD_Settings::is_photo_bypassed() ) { return; }
-		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
+		$user_id = self::requested_user_id();
 		if ( ! CP_LD_Photo_Manager::has_photo( $user_id ) ) {
 			wp_safe_redirect( $this->upload_url() );
 			exit;
@@ -85,7 +85,8 @@ class CP_LD_Certificate_Gate {
 		$page_h = $pdf->GetPageHeight();
 		$margin = 10;
 
-		// ---- Learner photo ----
+		// ---- Learner photo (only when the photo is switched on in Settings) ----
+		$photo_on   = ! CP_LD_Settings::is_photo_bypassed();
 		$photo_size = self::opt( $sc, 'photo_size', 24 );
 		$photo_x    = self::opt( $sc, 'photo_x',    $margin );
 		$photo_y    = self::opt( $sc, 'photo_y',    $page_h - $margin - $photo_size );
@@ -94,7 +95,7 @@ class CP_LD_Certificate_Gate {
 		$photo_src  = '';
 
 		// Use existing snapshot so the certificate keeps the original photo.
-		$snapshot_file = self::get_snapshot_file( $user_id, $post_id );
+		$snapshot_file = $photo_on ? self::get_snapshot_file( $user_id, $post_id ) : '';
 		if ( $snapshot_file ) {
 			$ext = strtolower( pathinfo( $snapshot_file, PATHINFO_EXTENSION ) );
 			if ( $ext === 'webp' && function_exists( 'imagecreatefromwebp' ) ) {
@@ -108,7 +109,7 @@ class CP_LD_Certificate_Gate {
 		}
 
 		// No snapshot yet — use current photo and create the snapshot.
-		if ( ! $photo_src && ! $photo_raw ) {
+		if ( $photo_on && ! $photo_src && ! $photo_raw ) {
 			$photo_id   = CP_LD_Photo_Manager::get_photo_id( $user_id );
 			$photo_file = $photo_id ? get_attached_file( $photo_id ) : '';
 			if ( $photo_file && file_exists( $photo_file ) ) {
@@ -163,7 +164,7 @@ class CP_LD_Certificate_Gate {
 			$pdf->SetFont( 'helvetica', '', 11 );
 			$pdf->SetTextColor( 60, 60, 60 );
 			$pdf->SetXY( $qr_x, $qr_y + $qr_size + 1 );
-			$pdf->Cell( $qr_size, 8, __( 'Scan to verify', 'cp-ld' ), 0, 0, 'C' );
+			$pdf->Cell( $qr_size, 8, __( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
 			if ( ! empty( $sc['show_url'] ) ) {
 				$pdf->SetFont( 'helvetica', '', 9 );
 				$pdf->SetTextColor( 60, 60, 60 );
@@ -189,14 +190,15 @@ class CP_LD_Certificate_Gate {
 			'show_url'   => 0,
 		), $atts );
 
-		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
+		$user_id = self::requested_user_id();
 		$post_id = self::detect_post_id();
 		if ( ! $user_id ) { return ''; }
 
-		// Photo — prefer the frozen snapshot so the certificate keeps the original photo.
+		// Photo (when switched on) — prefer the frozen snapshot so the certificate keeps the original photo.
 		$photo_html = '';
-		$photo_url  = self::get_snapshot_photo_url( $user_id, $post_id );
-		if ( ! $photo_url ) {
+		$photo_on   = ! CP_LD_Settings::is_photo_bypassed();
+		$photo_url  = $photo_on ? self::get_snapshot_photo_url( $user_id, $post_id ) : '';
+		if ( $photo_on && ! $photo_url ) {
 			$photo_url = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
 		}
 		if ( $photo_url ) {
@@ -210,7 +212,7 @@ class CP_LD_Certificate_Gate {
 		$svg        = CP_LD_QRCode::svg( $verify_url, $qr_w );
 		$label_html = '';
 		if ( $atts['label'] ) {
-			$label_html = '<p class="cp-ld-qr-label" style="margin:4px 0 0;font-size:11px;color:#64748b;">' . esc_html__( 'Scan to verify', 'cp-ld' ) . '</p>';
+			$label_html = '<p class="cp-ld-qr-label" style="margin:4px 0 0;font-size:11px;color:#64748b;">' . esc_html__( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
 		}
 		$url_html = '';
 		if ( $atts['show_url'] ) {
@@ -235,7 +237,7 @@ class CP_LD_Certificate_Gate {
 			'size'   => 12,
 		), $atts );
 
-		$user_id = isset( $_GET['user'] ) ? (int) $_GET['user'] : get_current_user_id();
+		$user_id = self::requested_user_id();
 		$post_id = self::detect_post_id();
 		if ( ! $user_id || ! $post_id ) { return ''; }
 
@@ -376,6 +378,27 @@ class CP_LD_Certificate_Gate {
 			return (float) $sc[ $override_key ];
 		}
 		return (float) $auto;
+	}
+
+	/**
+	 * Whose certificate: ?user= only for those who may see other learners' certificates (admins, and LearnDash group
+	 * leaders for their own groups' learners); everyone else gets their own. Otherwise anyone could add ?user=5 to a
+	 * page with the shortcode and get another learner's signed verification link.
+	 */
+	private static function requested_user_id() {
+		$current = get_current_user_id();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, and checked against the viewer's rights below.
+		$asked = isset( $_GET['user'] ) ? absint( $_GET['user'] ) : 0;
+		if ( ! $asked || $asked === $current ) {
+			return $current;
+		}
+		if ( current_user_can( 'edit_users' ) ) {
+			return $asked;
+		}
+		if ( function_exists( 'learndash_is_group_leader_of_user' ) && learndash_is_group_leader_of_user( $current, $asked ) ) {
+			return $asked;
+		}
+		return $current;
 	}
 
 	private static function detect_post_id() {

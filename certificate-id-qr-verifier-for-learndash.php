@@ -1,11 +1,18 @@
 <?php
 /**
- * Plugin Name: Certificate Photo Verifier For LearnDash
- * Description: Requires a photo to view LearnDash certificates and adds a scannable QR code for verification. Photo management is provided by a Gutenberg block. Supports Gravatar fallback, photo change logging, and snapshot-based verification pages.
- * Version:     1.1.0
- * Author:      Patrick Kellogg
- * License:     GPL-2.0-or-later
- * Text Domain: cp-ld
+ * Plugin Name:       Certificate ID & QR Verifier for LearnDash
+ * Plugin URI:        https://aikellogg.com/#/certificate-verifier
+ * Description:       Puts a unique certificate ID and a scannable QR code on LearnDash certificates. Anyone can scan the code to open a public page that confirms the certificate is genuine. Optional: require a learner photo on certificates.
+ * Version:           1.2.0
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
+ * Author:            Patrick Kellogg
+ * Author URI:        https://aikellogg.com
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       certificate-id-qr-verifier-for-learndash
+ *
+ * LearnDash is a trademark of its owner. This plugin is independent: it is not made or endorsed by LearnDash.
  *
  * @package CertificatesPlusLD
  */
@@ -14,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'CP_LD_VERSION', '1.1.0' );
+define( 'CP_LD_VERSION', '1.2.0' );
 define( 'CP_LD_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'CP_LD_URL',     plugin_dir_url( __FILE__ ) );
 

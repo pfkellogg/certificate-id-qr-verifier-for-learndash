@@ -702,7 +702,7 @@ class CP_LD_QRCode {
 
 		return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' . esc_attr( $vb ) . '" '
 			. 'width="' . esc_attr( $size_px ) . '" height="' . esc_attr( $size_px ) . '" '
-			. 'role="img" aria-label="' . esc_attr__( 'Certificate verification QR code', 'cp-ld' ) . '">'
+			. 'role="img" aria-label="' . esc_attr__( 'Certificate verification QR code', 'certificate-id-qr-verifier-for-learndash' ) . '">'
 			. '<rect width="' . $size_px . '" height="' . $size_px . '" fill="#fff"/>'
 			. '<g fill="#000">' . $rects . '</g>'
 			. '</svg>';

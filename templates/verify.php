@@ -7,11 +7,11 @@
 		<?php
 		if ( $valid && $user ) {
 			printf(
-				esc_html__( 'Certificate Verification — %s', 'cp-ld' ),
+				esc_html__( 'Certificate Verification — %s', 'certificate-id-qr-verifier-for-learndash' ),
 				esc_html( $user->display_name )
 			);
 		} else {
-			esc_html_e( 'Certificate Verification', 'cp-ld' );
+			esc_html_e( 'Certificate Verification', 'certificate-id-qr-verifier-for-learndash' );
 		}
 		?>
 	</title>
@@ -156,7 +156,7 @@
 		<div class="vc-header__logo">🎓</div>
 		<div>
 			<div class="vc-header__site"><?php bloginfo( 'name' ); ?></div>
-			<div class="vc-header__title"><?php esc_html_e( 'Certificate Verification', 'cp-ld' ); ?></div>
+			<div class="vc-header__title"><?php esc_html_e( 'Certificate Verification', 'certificate-id-qr-verifier-for-learndash' ); ?></div>
 		</div>
 	</div>
 
@@ -191,7 +191,7 @@
 				<div class="vc-identity__since">
 					<?php
 					printf(
-						esc_html__( 'Member since %s', 'cp-ld' ),
+						esc_html__( 'Member since %s', 'certificate-id-qr-verifier-for-learndash' ),
 						esc_html( date_i18n( get_option( 'date_format' ), strtotime( $user->user_registered ) ) )
 					);
 					?>
@@ -211,7 +211,7 @@
 		<!-- Status -->
 		<div class="vc-status vc-status--valid">
 			<span class="vc-status__icon">✅</span>
-			<?php esc_html_e( 'Certificate Verified', 'cp-ld' ); ?>
+			<?php esc_html_e( 'Certificate Verified', 'certificate-id-qr-verifier-for-learndash' ); ?>
 		</div>
 
 		<?php if ( $post ) : ?>
@@ -220,9 +220,9 @@
 			<div class="vc-section__heading">
 				<?php
 				switch ( $post_type ) {
-					case 'quiz':  esc_html_e( 'Quiz Details', 'cp-ld' );   break;
-					case 'group': esc_html_e( 'Group Details', 'cp-ld' );  break;
-					default:      esc_html_e( 'Course Details', 'cp-ld' ); break;
+					case 'quiz':  esc_html_e( 'Quiz Details', 'certificate-id-qr-verifier-for-learndash' );   break;
+					case 'group': esc_html_e( 'Group Details', 'certificate-id-qr-verifier-for-learndash' );  break;
+					default:      esc_html_e( 'Course Details', 'certificate-id-qr-verifier-for-learndash' ); break;
 				}
 				?>
 			</div>
@@ -231,9 +231,9 @@
 					<span class="vc-row__label">
 						<?php
 						switch ( $post_type ) {
-							case 'quiz':  esc_html_e( 'Quiz', 'cp-ld' );   break;
-							case 'group': esc_html_e( 'Group', 'cp-ld' );  break;
-							default:      esc_html_e( 'Course', 'cp-ld' ); break;
+							case 'quiz':  esc_html_e( 'Quiz', 'certificate-id-qr-verifier-for-learndash' );   break;
+							case 'group': esc_html_e( 'Group', 'certificate-id-qr-verifier-for-learndash' );  break;
+							default:      esc_html_e( 'Course', 'certificate-id-qr-verifier-for-learndash' ); break;
 						}
 						?>
 					</span>
@@ -244,13 +244,13 @@
 				$excerpt = get_the_excerpt( $post );
 				if ( $excerpt ) : ?>
 				<div class="vc-row">
-					<span class="vc-row__label"><?php esc_html_e( 'Description', 'cp-ld' ); ?></span>
+					<span class="vc-row__label"><?php esc_html_e( 'Description', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 					<span class="vc-row__value" style="font-weight:400;color:#4a5568;"><?php echo esc_html( wp_trim_words( $excerpt, 20 ) ); ?></span>
 				</div>
 				<?php endif; ?>
 
 				<div class="vc-row">
-					<span class="vc-row__label"><?php esc_html_e( 'Issued by', 'cp-ld' ); ?></span>
+					<span class="vc-row__label"><?php esc_html_e( 'Issued by', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 					<span class="vc-row__value"><?php bloginfo( 'name' ); ?></span>
 				</div>
 			</div>
@@ -260,12 +260,12 @@
 		<!-- Completion details -->
 		<?php if ( ! empty( $completion ) ) : ?>
 		<div class="vc-section">
-			<div class="vc-section__heading"><?php esc_html_e( 'Completion Details', 'cp-ld' ); ?></div>
+			<div class="vc-section__heading"><?php esc_html_e( 'Completion Details', 'certificate-id-qr-verifier-for-learndash' ); ?></div>
 			<div class="vc-rows">
 
 				<?php if ( ! empty( $completion['completed_date'] ) ) : ?>
 				<div class="vc-row">
-					<span class="vc-row__label"><?php esc_html_e( 'Completed', 'cp-ld' ); ?></span>
+					<span class="vc-row__label"><?php esc_html_e( 'Completed', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 					<span class="vc-row__value">
 						<?php echo esc_html( $completion['completed_date'] ); ?>
 						<?php if ( ! empty( $completion['completed_time'] ) ) : ?>
@@ -279,14 +279,14 @@
 
 					<?php if ( isset( $completion['steps_total'] ) && $completion['steps_total'] ) : ?>
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Steps', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Steps', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value">
 							<?php echo esc_html( $completion['steps_completed'] . ' / ' . $completion['steps_total'] ); ?>
 						</span>
 					</div>
 					<div class="vc-row" style="flex-direction:column;align-items:stretch;gap:4px;">
 						<div style="display:flex;justify-content:space-between;">
-							<span class="vc-row__label"><?php esc_html_e( 'Progress', 'cp-ld' ); ?></span>
+							<span class="vc-row__label"><?php esc_html_e( 'Progress', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 							<span class="vc-row__value"><?php echo esc_html( $completion['percent'] ); ?>%</span>
 						</div>
 						<div class="vc-score-bar">
@@ -297,7 +297,7 @@
 
 					<?php if ( ! empty( $completion['categories'] ) ) : ?>
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Category', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Category', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value"><?php echo esc_html( $completion['categories'] ); ?></span>
 					</div>
 					<?php endif; ?>
@@ -305,17 +305,17 @@
 				<?php elseif ( $post_type === 'quiz' ) : ?>
 
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Result', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Result', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value">
 							<?php if ( $completion['pass'] ) : ?>
-								<span class="vc-pill vc-pill--pass"><?php esc_html_e( 'PASSED', 'cp-ld' ); ?></span>
+								<span class="vc-pill vc-pill--pass"><?php esc_html_e( 'PASSED', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 							<?php else : ?>
-								<span class="vc-pill vc-pill--fail"><?php esc_html_e( 'FAILED', 'cp-ld' ); ?></span>
+								<span class="vc-pill vc-pill--fail"><?php esc_html_e( 'FAILED', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 							<?php endif; ?>
 						</span>
 					</div>
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Score', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Score', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value">
 							<?php echo esc_html( $completion['score'] . ' / ' . $completion['total_points'] ); ?>
 							&nbsp;<span style="color:#64748b;font-weight:400;">(<?php echo esc_html( $completion['percentage'] ); ?>%)</span>
@@ -323,7 +323,7 @@
 					</div>
 					<div class="vc-row" style="flex-direction:column;align-items:stretch;gap:4px;">
 						<div style="display:flex;justify-content:space-between;">
-							<span class="vc-row__label"><?php esc_html_e( 'Score', 'cp-ld' ); ?></span>
+							<span class="vc-row__label"><?php esc_html_e( 'Score', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 							<span class="vc-row__value"><?php echo esc_html( $completion['percentage'] ); ?>%</span>
 						</div>
 						<div class="vc-score-bar">
@@ -333,7 +333,7 @@
 					</div>
 					<?php if ( $completion['attempts'] ) : ?>
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Attempts', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Attempts', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value"><?php echo esc_html( $completion['attempts'] ); ?></span>
 					</div>
 					<?php endif; ?>
@@ -341,15 +341,15 @@
 				<?php elseif ( $post_type === 'group' ) : ?>
 
 					<div class="vc-row">
-						<span class="vc-row__label"><?php esc_html_e( 'Courses', 'cp-ld' ); ?></span>
+						<span class="vc-row__label"><?php esc_html_e( 'Courses', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
 						<span class="vc-row__value">
 							<?php echo esc_html( count( $completion['completed_courses'] ) . ' / ' . $completion['total_courses'] ); ?>
-							<?php esc_html_e( 'completed', 'cp-ld' ); ?>
+							<?php esc_html_e( 'completed', 'certificate-id-qr-verifier-for-learndash' ); ?>
 						</span>
 					</div>
 					<?php if ( ! empty( $completion['completed_courses'] ) ) : ?>
 					<div style="padding: 6px 0;">
-						<div class="vc-section__heading" style="margin-bottom:6px;"><?php esc_html_e( 'Completed courses', 'cp-ld' ); ?></div>
+						<div class="vc-section__heading" style="margin-bottom:6px;"><?php esc_html_e( 'Completed courses', 'certificate-id-qr-verifier-for-learndash' ); ?></div>
 						<ul class="vc-course-list">
 							<?php foreach ( $completion['completed_courses'] as $c ) : ?>
 								<li><span>✅</span><?php echo esc_html( $c ); ?></li>
@@ -372,7 +372,7 @@
 		</div>
 		<div class="vc-status vc-status--invalid">
 			<span class="vc-status__icon">⚠️</span>
-			<?php esc_html_e( 'Certificate could not be verified. This certificate does not exist or this QR code may be invalid.', 'cp-ld' ); ?>
+			<?php esc_html_e( 'Certificate could not be verified. This certificate does not exist or this QR code may be invalid.', 'certificate-id-qr-verifier-for-learndash' ); ?>
 		</div>
 
 	<?php endif; ?>
@@ -383,7 +383,7 @@
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
 		&nbsp;·&nbsp;
 		<?php printf(
-			esc_html__( 'Verified on %s', 'cp-ld' ),
+			esc_html__( 'Verified on %s', 'certificate-id-qr-verifier-for-learndash' ),
 			esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) )
 		); ?>
 	</div>
