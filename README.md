@@ -6,7 +6,9 @@
 
 Every certificate gets a unique ID and a QR code. A phone camera opens a public page that says **Certificate Verified**, with the learner, the course, the completion date and the approval number. When a certification period ends, the same page says **Certificate Expired**. Forged links say **Certificate could not be verified**.
 
-Free and open source (GPL). Made by Patrick Kellogg, founder of eLearning Complete (no longer affiliated with it), who wrote the first certificate tracker and verifier for LearnDash.
+> **The original.** Patrick Kellogg created the first certificate tracker and verifier for LearnDash. He founded eLearning Complete, where he built it (he is no longer affiliated with eLearning Complete), and this free plugin is its successor.
+
+Free and open source (GPL).
 
 [**Download the plugin (zip)**](https://github.com/pfkellogg/certificate-id-qr-verifier-for-learndash/releases/latest/download/certificate-id-qr-verifier-for-learndash.zip) · [Plugin page on aikellogg.com](https://aikellogg.com/#/certificate-verifier)
 

@@ -12,7 +12,7 @@ Puts a unique ID and a scannable QR code on LearnDash certificates. Anyone can s
 
 == Description ==
 
-Made by Patrick Kellogg, founder of eLearning Complete (no longer affiliated with it), who wrote the first certificate tracker and verifier for LearnDash.
+**The original.** Patrick Kellogg created the first certificate tracker and verifier for LearnDash. He founded eLearning Complete, where he built it (he is no longer affiliated with eLearning Complete), and this free plugin is its successor.
 
 A certificate is only worth something if people can trust it. This plugin adds two things to every LearnDash certificate:
 
