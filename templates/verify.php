@@ -282,6 +282,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<?php endif; ?>
 
+				<?php if ( ! empty( $completion['approval_number'] ) ) : ?>
+				<div class="vc-row">
+					<span class="vc-row__label"><?php esc_html_e( 'Approval number', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
+					<span class="vc-row__value"><?php echo esc_html( $completion['approval_number'] ); ?></span>
+				</div>
+				<?php endif; ?>
+
 				<?php if ( $post_type === 'course' ) : ?>
 
 					<?php if ( isset( $completion['steps_total'] ) && $completion['steps_total'] ) : ?>

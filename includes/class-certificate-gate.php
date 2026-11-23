@@ -415,6 +415,17 @@ class CP_LD_Certificate_Gate {
 	 * leaders for their own groups' learners); everyone else gets their own. Otherwise anyone could add ?user=5 to a
 	 * page with the shortcode and get another learner's signed verification link.
 	 */
+	/**
+	 * The certificate being shown (in a certificate's shortcodes): the learner and the course, quiz or group.
+	 *
+	 * @return array|null array( 'user_id' => .., 'post_id' => .. )
+	 */
+	public static function certificate_context() {
+		$user_id = self::requested_user_id();
+		$post_id = self::detect_post_id();
+		return ( $user_id && $post_id ) ? array( 'user_id' => $user_id, 'post_id' => $post_id ) : null;
+	}
+
 	private static function requested_user_id() {
 		$current = get_current_user_id();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, and checked against the viewer's rights below.

@@ -28,6 +28,16 @@ With no setup, every certificate gets the QR code in the bottom-right corner, la
 * `[cp_ld_certificate qr_x="240" qr_y="155" qr_size="36" show_url="1"]` — where the QR code goes, its size, and (with `show_url="1"`) the verification link printed under it.
 * `[cp_ld_certificate_id prefix="FSB" size="5"]` — the certificate ID, with your own prefix (CERT if you leave it out). The verification page shows the same ID.
 
+= Approval numbers by date (state boards, CE credits) =
+
+Courses approved by a state board or an accrediting body often get a new approval number every year. A certificate must show the number that was valid when the learner completed it, so learners who finished last year keep last year's number.
+
+On each course (or quiz, or group) fill in **Approval numbers by date**: one row per period, with From, To and the number. Then put `[cp_ld_approval_number before="Approval #: "]` in the certificate. The verification page shows the number as well. When a new number arrives, add a row. Certificates already issued keep theirs. If no period covers the completion date, nothing is printed (or `default="..."`).
+
+= Expiration dates =
+
+`[cp_ld_certificate_expires years="1"]` (or `days="365"`, and `format="d-m-Y"`) prints when the certificate expires, counted from the completion date.
+
 = A verification page with a search box =
 
 Put `[cp_ld_certificate_search]` on a page: visitors type a certificate ID and go to its verification page.
@@ -71,6 +81,10 @@ It works with LearnDash's built-in certificates (the PDF certificates you edit a
 
 The site name, the learner's name, the certificate ID, "Certificate Verified", the course (or quiz or group) and when it was completed. With photos on, the learner's photo too.
 
+= Are the approval numbers removed when the plugin is deleted? =
+
+No. They belong to your courses, and they're the record of what each certificate was approved under. They stay in case you reinstall.
+
 = Can someone fake a verification link? =
 
 No: the link carries a signature made with your site's secret keys. Any change to it fails verification.
@@ -106,6 +120,8 @@ Use one or the other: with both active, certificates would get two QR codes. The
 * All text can be translated; settings are removed when the plugin is deleted.
 * Replaces eLearning Complete's Certificate Tracker and Certificate Verifier for LearnDash: their saved IDs, shortcodes and QR codes keep working.
 * New: `[cp_ld_certificate_search]`, a search box for certificate IDs.
+* New: approval numbers by date on courses, quizzes and groups, with `[cp_ld_approval_number]`, also shown on the verification page.
+* New: `[cp_ld_certificate_expires]`.
 
 = 1.1.0 =
 * Certificate ID on the verification page; show_url option.

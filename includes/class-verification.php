@@ -95,6 +95,10 @@ class CP_LD_Verification {
 					$cert_code_from_id = $found['id'];
 				}
 
+				// The approval number valid when it was completed (Approval numbers by date, on the course).
+				$approved_at = ( $found && $found['legacy'] && $found['timestamp'] ) ? $found['timestamp'] : CP_LD_Certificate_Gate::get_completion_timestamp( $user_id, $course_id );
+				$completion['approval_number'] = CP_LD_Approvals::number_at( $course_id, $approved_at );
+
 				// No completion data means course data was deleted.
 				if ( empty( $completion['completed_date'] ) ) {
 					$valid = false;
