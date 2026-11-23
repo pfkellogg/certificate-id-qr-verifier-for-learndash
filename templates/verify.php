@@ -187,7 +187,7 @@
 				$full_name = trim( $user->first_name . ' ' . $user->last_name );
 				?>
 				<div class="vc-identity__name"><?php echo esc_html( $full_name ?: $user->display_name ); ?></div>
-				<div class="vc-identity__email"><?php echo esc_html( $user->user_email ); ?></div>
+				<?php /* (no email: this page is public, anyone who sees the certificate can open it) */ ?>
 				<div class="vc-identity__since">
 					<?php
 					printf(
@@ -201,10 +201,10 @@
 
 		<!-- Certificate ID -->
 		<?php
-		$cert_timestamp = CP_LD_Certificate_Gate::get_completion_timestamp( $user_id, $course_id );
-		if ( $cert_timestamp ) : ?>
+		$cert_code = CP_LD_Certificate_Gate::certificate_id( $user_id, $course_id ); // (the same ID as on the certificate)
+		if ( $cert_code ) : ?>
 		<div style="text-align:center;padding:14px 28px;border-bottom:1px solid #e8edf2;font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#1a202c;letter-spacing:.03em;">
-			<?php echo esc_html( 'CERT-' . $cert_timestamp . '-' . $course_id . '-' . $user_id ); ?>
+			<?php echo esc_html( $cert_code ); ?>
 		</div>
 		<?php endif; ?>
 

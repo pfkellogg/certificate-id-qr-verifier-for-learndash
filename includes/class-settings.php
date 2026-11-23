@@ -23,8 +23,8 @@ class CP_LD_Settings {
 
 	public function add_menu() {
 		add_options_page(
-			__( 'Certificate Photo Verifier', 'certificate-id-qr-verifier-for-learndash' ),
-			__( 'Cert Photo Verifier', 'certificate-id-qr-verifier-for-learndash' ),
+			__( 'Certificate ID & QR Verifier', 'certificate-id-qr-verifier-for-learndash' ),
+			__( 'Certificate Verifier', 'certificate-id-qr-verifier-for-learndash' ),
 			'manage_options',
 			'cp-ld-settings',
 			array( $this, 'render_page' )
@@ -575,7 +575,7 @@ class CP_LD_Settings {
 							id="cp_ld_bypass_photo"
 							value="1"
 							<?php checked( $bypass ); ?> />
-						<?php esc_html_e( 'Bypass Photo Requirement', 'certificate-id-qr-verifier-for-learndash' ); ?>
+						<?php esc_html_e( 'No learner photo (QR code and ID only)', 'certificate-id-qr-verifier-for-learndash' ); ?>
 					</label>
 				</div>
 

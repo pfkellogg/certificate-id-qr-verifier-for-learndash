@@ -49,3 +49,17 @@ register_deactivation_hook( __FILE__, 'cp_ld_deactivate' );
 function cp_ld_deactivate() {
 	flush_rewrite_rules();
 }
+
+/**
+ * Two plugins drawing on the same certificates (this and the FastDash/SlashDash Toolkit's Certificate Verifier module)
+ * would put two QR codes and two IDs on each: say so on the admin screens.
+ */
+add_action(
+	'admin_notices',
+	function () {
+		if ( ! current_user_can( 'activate_plugins' ) || ! class_exists( 'DVP_LD_QRCode' ) ) {
+			return;
+		}
+		echo '<div class="notice notice-warning"><p>' . esc_html__( 'Certificate ID & QR Verifier for LearnDash: another certificate verifier is also active (the toolkit\'s Certificate Verifier module). Use one of them, or certificates will get two QR codes and two IDs.', 'certificate-id-qr-verifier-for-learndash' ) . '</p></div>';
+	}
+);

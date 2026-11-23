@@ -166,10 +166,13 @@ class CP_LD_Certificate_Gate {
 			$pdf->SetXY( $qr_x, $qr_y + $qr_size + 1 );
 			$pdf->Cell( $qr_size, 8, __( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
 			if ( ! empty( $sc['show_url'] ) ) {
-				$pdf->SetFont( 'helvetica', '', 9 );
+				// The link under the code, small, ending at the code's right edge (a link is much wider than the code;
+				// centred under it, it ran off the page).
+				$pdf->SetFont( 'helvetica', '', 7 );
 				$pdf->SetTextColor( 60, 60, 60 );
-				$pdf->SetXY( $qr_x, $qr_y + $qr_size + 7 );
-				$pdf->Cell( $qr_size, 5, $verify_url, 0, 0, 'C' );
+				$right = min( $page_w - 3, $qr_x + $qr_size );
+				$pdf->SetXY( 3, $qr_y + $qr_size + 7 );
+				$pdf->Cell( $right - 3, 4, $verify_url, 0, 0, 'R' );
 			}
 		}
 	}
@@ -234,20 +237,15 @@ class CP_LD_Certificate_Gate {
 			'prefix' => 'CERT',
 			'x'      => null,
 			'y'      => null,
-			'size'   => 12,
+			'size'   => 5, // mm
 		), $atts );
 
 		$user_id = self::requested_user_id();
 		$post_id = self::detect_post_id();
 		if ( ! $user_id || ! $post_id ) { return ''; }
 
-		$timestamp = self::get_completion_timestamp( $user_id, $post_id );
-		if ( ! $timestamp ) { return ''; }
-
-		$cert_id = strtoupper( sanitize_text_field( $atts['prefix'] ) )
-			. '-' . $timestamp
-			. '-' . $post_id
-			. '-' . $user_id;
+		$cert_id = self::certificate_id( $user_id, $post_id, $atts['prefix'] );
+		if ( '' === $cert_id ) { return ''; }
 
 		$style = 'font-size:' . (int) $atts['size'] . 'mm;';
 		if ( null !== $atts['x'] && null !== $atts['y'] ) {
@@ -255,6 +253,33 @@ class CP_LD_Certificate_Gate {
 		}
 
 		return '<span class="cp-ld-certificate-id" style="' . esc_attr( $style ) . '">' . esc_html( $cert_id ) . '</span>';
+	}
+
+	/**
+	 * The certificate's unique ID: PREFIX-completion time-course (or quiz, group)-user. The same everywhere: on the
+	 * certificate and on the verification page. Without a prefix, the one in the certificate template's
+	 * [cp_ld_certificate_id prefix="..."], else CERT.
+	 *
+	 * @return string '' when it isn't completed.
+	 */
+	public static function certificate_id( $user_id, $post_id, $prefix = null ) {
+		$timestamp = self::get_completion_timestamp( $user_id, $post_id );
+		if ( ! $timestamp ) {
+			return '';
+		}
+		if ( null === $prefix ) {
+			$prefix   = 'CERT';
+			$template = function_exists( 'learndash_get_setting' ) ? (int) learndash_get_setting( $post_id, 'certificate' ) : 0;
+			$content  = $template ? (string) get_post_field( 'post_content', $template ) : '';
+			if ( $content && preg_match( '/\[cp_ld_certificate_id\b([^\]]*)\]/', $content, $sc ) ) {
+				$atts = shortcode_parse_atts( $sc[1] );
+				if ( is_array( $atts ) && ! empty( $atts['prefix'] ) ) {
+					$prefix = $atts['prefix'];
+				}
+			}
+		}
+		$prefix = preg_replace( '/[^A-Z0-9]/', '', strtoupper( sanitize_text_field( $prefix ) ) );
+		return ( '' !== $prefix ? $prefix : 'CERT' ) . '-' . $timestamp . '-' . (int) $post_id . '-' . (int) $user_id;
 	}
 
 	public static function get_completion_timestamp( $user_id, $post_id ) {

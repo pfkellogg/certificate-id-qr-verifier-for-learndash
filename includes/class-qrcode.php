@@ -90,7 +90,7 @@ class CP_LD_QRCode {
 	private static $VER = array(
 		1  => array( 16,  10, 1, 16, 0,  0 ),
 		2  => array( 28,  16, 1, 28, 0,  0 ),
-		3  => array( 44,  13, 2, 22, 0,  0 ),
+		3  => array( 44,  26, 1, 44, 0,  0 ),
 		4  => array( 64,  18, 2, 32, 0,  0 ),
 		5  => array( 86,  24, 2, 43, 0,  0 ),
 		6  => array( 108, 16, 4, 27, 0,  0 ),
@@ -148,8 +148,8 @@ class CP_LD_QRCode {
 		}
 
 		$codewords = self::encode( $bytes, $version );
-		$matrix    = self::build_matrix( $codewords, $version );
-		$matrix    = self::apply_best_mask( $matrix, $version );
+		list( $matrix, $reserved ) = self::build_matrix( $codewords, $version );
+		$matrix    = self::apply_best_mask( $matrix, $reserved, $version );
 
 		return self::render_svg( $matrix, $size );
 	}
@@ -177,8 +177,8 @@ class CP_LD_QRCode {
 		}
 
 		$codewords = self::encode( $bytes, $version );
-		$matrix    = self::build_matrix( $codewords, $version );
-		$matrix    = self::apply_best_mask( $matrix, $version );
+		list( $matrix, $reserved ) = self::build_matrix( $codewords, $version );
+		$matrix    = self::apply_best_mask( $matrix, $reserved, $version );
 
 		$n         = count( $matrix );
 		$quiet     = 4;
@@ -232,8 +232,8 @@ class CP_LD_QRCode {
 		}
 
 		$codewords = self::encode( $bytes, $version );
-		$matrix    = self::build_matrix( $codewords, $version );
-		$matrix    = self::apply_best_mask( $matrix, $version );
+		list( $matrix, $reserved ) = self::build_matrix( $codewords, $version );
+		$matrix    = self::apply_best_mask( $matrix, $reserved, $version );
 
 		return self::render_png_data_uri( $matrix, $size );
 	}
@@ -283,9 +283,15 @@ class CP_LD_QRCode {
 	// Version selection
 	// -----------------------------------------------------------------------
 
+	/** Bits of the character count in byte mode: 8 up to version 9, 16 from version 10. */
+	private static function count_bits( $version ) {
+		return $version <= 9 ? 8 : 16;
+	}
+
+	/** The smallest version whose data codewords hold the mode (4 bits), the count and the bytes. */
 	private static function pick_version( $byte_count ) {
 		foreach ( self::$VER as $v => $info ) {
-			if ( $byte_count <= $info[0] ) {
+			if ( (int) ceil( ( 4 + self::count_bits( $v ) + 8 * $byte_count ) / 8 ) <= $info[0] ) {
 				return $v;
 			}
 		}
@@ -310,14 +316,14 @@ class CP_LD_QRCode {
 		$bits  = array();
 		// Mode indicator: byte mode = 0100.
 		self::push_bits( $bits, 0b0100, 4 );
-		// Character count (8 bits for version 1-9).
-		self::push_bits( $bits, count( $bytes ), 8 );
+		// Character count (8 bits up to version 9, 16 from version 10).
+		self::push_bits( $bits, count( $bytes ), self::count_bits( $version ) );
 		// Data bytes.
 		foreach ( $bytes as $b ) {
 			self::push_bits( $bits, $b, 8 );
 		}
-		// Terminator.
-		self::push_bits( $bits, 0, 4 );
+		// Terminator (up to 4 zero bits, as room allows).
+		self::push_bits( $bits, 0, min( 4, 8 * $max - count( $bits ) ) );
 		// Pad to byte boundary.
 		while ( count( $bits ) % 8 !== 0 ) {
 			$bits[] = 0;
@@ -407,11 +413,12 @@ class CP_LD_QRCode {
 		self::place_finder( $m, $r, $size - 7, 0 );
 		self::place_timing( $m, $r, $size );
 		self::place_alignment( $m, $r, $version, $size );
+		self::place_version_info( $m, $r, $version, $size );
 		self::reserve_format_areas( $m, $r, $size );
 		self::place_dark_module( $m, $r, $version );
 		self::place_data( $m, $r, $codewords, $size );
 
-		return $m;
+		return array( $m, $r );
 	}
 
 	private static function set( &$m, &$r, $row, $col, $val ) {
@@ -431,7 +438,8 @@ class CP_LD_QRCode {
 				if ( $row === -1 || $row === 7 || $col === -1 || $col === 7 ) {
 					$val = 0;
 				} elseif ( $row >= 1 && $row <= 5 && $col >= 1 && $col <= 5 ) {
-					$val = ( $row >= 2 && $row <= 4 && $col >= 2 && $col <= 4 ) ? 0 : 1;
+					// A light ring around a solid dark 3x3 centre.
+					$val = ( $row >= 2 && $row <= 4 && $col >= 2 && $col <= 4 ) ? 1 : 0;
 				} else {
 					$val = 1;
 				}
@@ -470,6 +478,28 @@ class CP_LD_QRCode {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Version information (versions 7 and up): 18 bits (6 version bits + 12 BCH bits), twice, in 6x3 blocks beside the
+	 * top-right and bottom-left finders.
+	 */
+	private static function place_version_info( &$m, &$r, $version, $size ) {
+		if ( $version < 7 ) {
+			return;
+		}
+		$rem = $version;
+		for ( $i = 0; $i < 12; $i++ ) {
+			$rem = ( $rem << 1 ) ^ ( ( $rem >> 11 ) * 0x1F25 );
+		}
+		$bits = ( $version << 12 ) | $rem;
+		for ( $i = 0; $i < 18; $i++ ) {
+			$bit = ( $bits >> $i ) & 1;
+			$a   = $size - 11 + $i % 3;
+			$b   = intdiv( $i, 3 );
+			self::set( $m, $r, $b, $a, $bit ); // top right
+			self::set( $m, $r, $a, $b, $bit ); // bottom left
 		}
 	}
 
@@ -542,14 +572,14 @@ class CP_LD_QRCode {
 	/**
 	 * Try all 8 mask patterns, apply format info to each, pick lowest penalty.
 	 */
-	private static function apply_best_mask( $matrix, $version ) {
+	private static function apply_best_mask( $matrix, $reserved, $version ) {
 		$size        = count( $matrix );
 		$best_score  = PHP_INT_MAX;
 		$best_matrix = $matrix;
 
 		for ( $pattern = 0; $pattern <= 7; $pattern++ ) {
 			$m = $matrix;
-			self::apply_mask( $m, $pattern, $size );
+			self::apply_mask( $m, $reserved, $pattern, $size );
 			self::place_format( $m, $pattern, $size );
 			$score = self::penalty( $m, $size );
 			if ( $score < $best_score ) {
@@ -575,10 +605,11 @@ class CP_LD_QRCode {
 		return false;
 	}
 
-	private static function apply_mask( &$m, $pattern, $size ) {
+	/** The mask flips data modules only, never the finder, timing, alignment, format or dark modules. */
+	private static function apply_mask( &$m, $reserved, $pattern, $size ) {
 		for ( $row = 0; $row < $size; $row++ ) {
 			for ( $col = 0; $col < $size; $col++ ) {
-				if ( $m[ $row ][ $col ] !== -1 && self::mask_bit( $pattern, $row, $col ) ) {
+				if ( ! $reserved[ $row ][ $col ] && self::mask_bit( $pattern, $row, $col ) ) {
 					$m[ $row ][ $col ] ^= 1;
 				}
 			}
@@ -598,14 +629,15 @@ class CP_LD_QRCode {
 			$bit = ( $fmt >> ( 14 - $i ) ) & 1;
 			$m[ $positions[ $i ][0] ][ $positions[ $i ][1] ] = $bit;
 		}
-		// Mirror to top-right.
-		for ( $i = 0; $i < 7; $i++ ) {
+		// Second copy: bits 0-7 along row 8 from the right edge, bits 8-14 down column 8 at the bottom left
+		// (row size - 8 is the dark module, which stays dark).
+		for ( $i = 0; $i < 8; $i++ ) {
 			$m[8][ $size - 1 - $i ] = ( $fmt >> $i ) & 1;
 		}
-		// Mirror to bottom-left.
-		for ( $i = 0; $i < 8; $i++ ) {
-			$m[ $size - 8 + $i ][8] = ( $fmt >> ( 7 + $i ) ) & 1;
+		for ( $i = 8; $i < 15; $i++ ) {
+			$m[ $size - 15 + $i ][8] = ( $fmt >> $i ) & 1;
 		}
+		$m[ $size - 8 ][8] = 1;
 	}
 
 	// -----------------------------------------------------------------------
