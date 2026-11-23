@@ -160,23 +160,24 @@ class CP_LD_Certificate_Gate {
 		}
 		$qr_size = self::opt( $sc, 'qr_size', 32 );
 		$qr_x    = self::opt( $sc, 'qr_x',    $page_w - $margin - $qr_size );
-		$qr_y    = self::opt( $sc, 'qr_y',    $page_h - $margin - $qr_size - 8 );
+		$qr_y    = self::opt( $sc, 'qr_y',    $page_h - $margin - $qr_size - ( empty( $sc['show_url'] ) ? 9 : 14 ) );
 
 		$verify_url = CP_LD_Verification::get_verify_url( $user_id, $post_id );
 		$qr_png     = CP_LD_QRCode::png_bytes( $verify_url, 300 );
 		if ( $qr_png ) {
 			$pdf->Image( '@' . $qr_png, $qr_x, $qr_y, $qr_size, $qr_size, 'PNG' );
-			$pdf->SetFont( 'helvetica', '', 11 );
+			// "Scan to verify" in the 6 mm under the code, the link (if shown) in the 4 mm under that: they don't touch.
+			$pdf->SetFont( 'helvetica', '', 10 );
 			$pdf->SetTextColor( 60, 60, 60 );
 			$pdf->SetXY( $qr_x, $qr_y + $qr_size + 1 );
-			$pdf->Cell( $qr_size, 8, __( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
+			$pdf->Cell( $qr_size, 6, __( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
 			if ( ! empty( $sc['show_url'] ) ) {
 				// The link under the code, small, ending at the code's right edge (a link is much wider than the code;
 				// centred under it, it ran off the page).
 				$pdf->SetFont( 'helvetica', '', 7 );
 				$pdf->SetTextColor( 60, 60, 60 );
 				$right = min( $page_w - 3, $qr_x + $qr_size );
-				$pdf->SetXY( 3, $qr_y + $qr_size + 7 );
+				$pdf->SetXY( 3, $qr_y + $qr_size + 8.5 );
 				$pdf->Cell( $right - 3, 4, $verify_url, 0, 0, 'R' );
 			}
 		}
