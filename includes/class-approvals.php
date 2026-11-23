@@ -11,6 +11,8 @@
  *
  * [cp_ld_certificate_status start=".." end=".."] prints one of three texts, depending on when the learner completed:
  * before start → expired="..", from start up to (not including) end → valid="..", from end on → not_active="..".
+ * A valid certificate becomes expired once the end has passed (when it's viewed or verified after the end).
+ * The verification page reads start and end from the same shortcode in the course's certificate template.
  * Only start and end change when a period ends. They take a Unix timestamp or a date ("2026-12-31 23:59:59") read in
  * the site's time zone (Settings → General). step=".." uses that lesson's or topic's completion instead of the course's.
  */
@@ -169,6 +171,55 @@ class CP_LD_Approvals {
 		return ( $activity && ! empty( $activity->activity_completed ) ) ? (int) $activity->activity_completed : 0;
 	}
 
+	/**
+	 * expired, valid or not_active, for a completion time, a period, and now.
+	 */
+	public static function status_for( $completed, $start, $end, $now = null ) {
+		$now = null === $now ? time() : (int) $now;
+		if ( null !== $start && $completed < $start ) {
+			return 'expired';    // completed before the period
+		}
+		if ( null !== $end && $completed >= $end ) {
+			return 'not_active'; // completed after the period
+		}
+		if ( null !== $end && $now >= $end ) {
+			return 'expired';    // completed in the period, which has ended
+		}
+		return 'valid';
+	}
+
+	/**
+	 * The status of a learner's certificate for a course, quiz or group, from the [cp_ld_certificate_status] in its
+	 * certificate template.
+	 *
+	 * @param int      $completed The completion time to use (an old certificate ID's own), or null for the current one.
+	 * @return array|null array( 'status', 'start', 'end' ) or null when the template has no status shortcode.
+	 */
+	public static function status_of( $user_id, $post_id, $completed = null ) {
+		$template = function_exists( 'learndash_get_setting' ) ? (int) learndash_get_setting( $post_id, 'certificate' ) : 0;
+		$content  = $template ? (string) get_post_field( 'post_content', $template ) : '';
+		if ( ! $content || ! preg_match( '/\[cp_ld_certificate_status\b([^\]]*)\]/', $content, $m ) ) {
+			return null;
+		}
+		$atts = shortcode_parse_atts( $m[1] );
+		$atts = is_array( $atts ) ? $atts : array();
+		if ( null === $completed ) {
+			$completed = ! empty( $atts['step'] )
+				? self::step_completion( $user_id, absint( $atts['step'] ) )
+				: CP_LD_Certificate_Gate::get_completion_timestamp( $user_id, $post_id );
+		}
+		if ( ! $completed ) {
+			return null;
+		}
+		$start = self::moment( isset( $atts['start'] ) ? $atts['start'] : '' );
+		$end   = self::moment( isset( $atts['end'] ) ? $atts['end'] : '' );
+		return array(
+			'status' => self::status_for( (int) $completed, $start, $end ),
+			'start'  => $start,
+			'end'    => $end,
+		);
+	}
+
 	public function status_shortcode( $atts ) {
 		$atts    = shortcode_atts(
 			array(
@@ -192,16 +243,8 @@ class CP_LD_Approvals {
 		if ( ! $completed ) {
 			return '';
 		}
-		$start = self::moment( $atts['start'] );
-		$end   = self::moment( $atts['end'] );
-		if ( null !== $start && $completed < $start ) {
-			$text = $atts['expired'];
-		} elseif ( null === $end || $completed < $end ) {
-			$text = $atts['valid'];
-		} else {
-			$text = $atts['not_active'];
-		}
-		return esc_html( $text );
+		$status = self::status_for( $completed, self::moment( $atts['start'] ), self::moment( $atts['end'] ) );
+		return esc_html( $atts[ $status ] );
 	}
 
 	// -----------------------------------------------------------------------

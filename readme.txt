@@ -46,6 +46,8 @@ On each course (or quiz, or group) fill in **Approval numbers by date**: one row
 * from `start` up to (not including) `end`: **Valid** (or `valid="..."`)
 * at `end` or later: **Not active** (or `not_active="..."`)
 
+Once `end` has passed, a certificate completed in the period says **Expired** when it's viewed, and its verification page says **Certificate Expired** ("A genuine certificate, valid until ..."). While the period runs, the verification page says **Certificate Verified** with "Valid until ...". The verification page takes the dates from this shortcode in the course's certificate template, so you only change them in one place.
+
 `start` and `end` take a Unix timestamp (`1767225600`) or a date and time (`2026-12-31 23:59:59`), read in your site's time zone (Settings → General). When a period ends, only the two dates change. Leave out `end` for "no end yet". Add `step="123"` to use the completion of lesson or topic 123 instead of the course's.
 
 Example: `[cp_ld_certificate_status start="2026-01-01" end="2027-01-01" expired="Expired" valid="Valid through Dec 31, 2026" not_active="Not yet active"]`

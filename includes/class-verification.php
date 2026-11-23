@@ -55,6 +55,7 @@ class CP_LD_Verification {
 		}
 
 		$valid          = false;
+		$cert_status    = null;       // array( status, start, end ) when the certificate has a validity period
 		$user           = null;
 		$post           = null;       // The course, quiz, or group post object.
 		$post_type      = '';         // 'course', 'quiz', or 'group'
@@ -98,6 +99,9 @@ class CP_LD_Verification {
 				// The approval number valid when it was completed (Approval numbers by date, on the course).
 				$approved_at = ( $found && $found['legacy'] && $found['timestamp'] ) ? $found['timestamp'] : CP_LD_Certificate_Gate::get_completion_timestamp( $user_id, $course_id );
 				$completion['approval_number'] = CP_LD_Approvals::number_at( $course_id, $approved_at );
+
+				// Expired / not active, from the certificate template's [cp_ld_certificate_status start end].
+				$cert_status = CP_LD_Approvals::status_of( $user_id, $course_id, ( $found && $found['legacy'] && $found['timestamp'] ) ? $found['timestamp'] : null );
 
 				// No completion data means course data was deleted.
 				if ( empty( $completion['completed_date'] ) ) {

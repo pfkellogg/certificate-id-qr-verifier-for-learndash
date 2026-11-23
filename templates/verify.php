@@ -92,6 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 		.vc-status--valid   { background: #ecfdf5; color: #065f46; }
 		.vc-status--invalid { background: #fef2f2; color: #7f1d1d; }
+		.vc-status--expired { background: #fffbeb; color: #78350f; flex-wrap: wrap; }
+		.vc-status__note    { flex-basis: 100%; font-size: 13px; font-weight: 400; }
 		.vc-status__icon    { font-size: 20px; }
 
 		/* ---- Sections ---- */
@@ -216,10 +218,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php endif; ?>
 
 		<!-- Status -->
+		<?php
+		$vc_state = $cert_status ? $cert_status['status'] : 'valid';
+		$vc_df    = get_option( 'date_format' );
+		if ( 'valid' === $vc_state ) : ?>
 		<div class="vc-status vc-status--valid">
 			<span class="vc-status__icon">✅</span>
 			<?php esc_html_e( 'Certificate Verified', 'certificate-id-qr-verifier-for-learndash' ); ?>
+			<?php if ( $cert_status && null !== $cert_status['end'] ) : ?>
+			<span class="vc-status__note"><?php
+				/* translators: %s: the last day the certificate is valid */
+				echo esc_html( sprintf( __( 'Valid until %s', 'certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) ); ?></span>
+			<?php endif; ?>
 		</div>
+		<?php else : ?>
+		<div class="vc-status vc-status--expired">
+			<span class="vc-status__icon">⏰</span>
+			<?php 'expired' === $vc_state ? esc_html_e( 'Certificate Expired', 'certificate-id-qr-verifier-for-learndash' ) : esc_html_e( 'Certificate Not Active', 'certificate-id-qr-verifier-for-learndash' ); ?>
+			<span class="vc-status__note"><?php
+			if ( 'expired' === $vc_state && null !== $cert_status['end'] && time() >= $cert_status['end'] ) {
+				/* translators: %s: the last day the certificate was valid */
+				echo esc_html( sprintf( __( 'A genuine certificate, valid until %s.', 'certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) );
+			} elseif ( 'expired' === $vc_state ) {
+				/* translators: %s: the first day of the current period */
+				echo esc_html( sprintf( __( 'A genuine certificate, completed before the current period began (%s).', 'certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['start'] ) ) );
+			} else {
+				/* translators: %s: the last day of the period */
+				echo esc_html( sprintf( __( 'A genuine certificate, completed after its period ended (%s).', 'certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) );
+			}
+			?></span>
+		</div>
+		<?php endif; ?>
 
 		<?php if ( $post ) : ?>
 		<!-- Content details -->
