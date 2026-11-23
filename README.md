@@ -1,151 +1,167 @@
-# Certificate Photo Verifier For LearnDash
+# Certificate ID & QR Verifier for LearnDash
 
-Requires a photo to view LearnDash certificates and adds a scannable QR code for verification. Photo management is provided by a Gutenberg block. Supports Gravatar fallback, photo change logging, and snapshot-based verification pages.
+![Certificate ID & QR Verifier for LearnDash](.wordpress-org/banner-1544x500.png)
 
-## Requirements
+**Scan any LearnDash certificate and know, in a second, that it's genuine, current and approved.**
 
-- WordPress 6.0+
-- LearnDash 4.x+
-- PHP 7.4+
+Every certificate gets a unique ID and a QR code. A phone camera opens a public page that says **Certificate Verified**, with the learner, the course, the completion date and the approval number. When a certification period ends, the same page says **Certificate Expired**. Forged links say **Certificate could not be verified**.
 
-## Setup
+Free and open source (GPL). Made by Patrick Kellogg, founder of eLearning Complete (no longer affiliated with it), who wrote the first certificate tracker and verifier for LearnDash.
 
-1. Activate the plugin.
-2. Create a WordPress page and add the **Certificate Photo Upload** block (`cp-ld/photo-upload`). This is where learners are redirected when they need a photo.
-3. In your LearnDash certificate template, add the shortcode below to control where the photo and QR code appear on the PDF.
+[**Download the plugin (zip)**](https://github.com/pfkellogg/certificate-id-qr-verifier-for-learndash/releases/latest/download/certificate-id-qr-verifier-for-learndash.zip) · [Plugin page on aikellogg.com](https://aikellogg.com/#/certificate-verifier)
+
+---
+
+## Why it's different
+
+- **A QR code with no settings page to fill in.** Activate the plugin: every certificate gets a scannable code. No QR service, no API key: the code is made on your own server.
+- **Can't be forged.** The link in the code is signed with your site's secret keys. Change one character and it fails.
+- **Built for certifications that repeat.** Courses and quizzes that must be retaken every year get dates in one shortcode: the certificate and the verification page say *Valid*, *Expired* or *Not active* by themselves. Next year, change two dates.
+- **Approval numbers that follow the calendar.** State boards and accrediting bodies issue a new approval number every period. Each certificate shows the number that was valid on the day the learner finished, forever.
+- **eLearning Complete compatible.** Replaces the old *Certificate Tracker* and *Certificate Verifier for LearnDash*: their saved IDs, shortcodes and printed QR codes keep working.
+- **Smart shortcodes.** Small, single-purpose shortcodes you drop into any LearnDash certificate.
+
+![A certificate](.wordpress-org/screenshot-1.png)
+
+## The verification page
+
+| Verified | Expired | Forged |
+|---|---|---|
+| ![Verified](.wordpress-org/screenshot-2.png) | ![Expired](.wordpress-org/screenshot-3.png) | ![Not verified](.wordpress-org/screenshot-4.png) |
+
+The QR code opens it straight away. Visitors can also type an ID into the search box ([below](#search-box)).
+
+## Install
+
+1. Install and activate **LearnDash**, and give a course, quiz or group a certificate.
+2. [Download the zip](https://github.com/pfkellogg/certificate-id-qr-verifier-for-learndash/releases/latest/download/certificate-id-qr-verifier-for-learndash.zip), then **Plugins → Add New → Upload Plugin**, and activate.
+3. That's all: certificates now carry a QR code in the bottom-right corner. Add the shortcodes below to place things yourself.
+
+Requires WordPress 6.0+, PHP 7.4+, LearnDash (built-in PDF certificates).
 
 ## Shortcodes
 
-### Photo & QR Code
+Put these in a LearnDash certificate (**LearnDash LMS → Certificates**). Positions are in millimetres from the top-left corner of the page.
 
-Add this shortcode to your LearnDash certificate template. It places both the learner's photo and a QR verification code on the certificate PDF.
-
-```
-[cp_ld_certificate photo_x="10" photo_y="170" photo_size="24" qr_x="240" qr_y="155" qr_size="36"]
-```
-
-| Attribute    | Description                                          | Default             |
-| ------------ | ---------------------------------------------------- | ------------------- |
-| `photo_x`    | Photo horizontal position in mm from the left edge   | Bottom-left corner  |
-| `photo_y`    | Photo vertical position in mm from the top edge      | Bottom-left corner  |
-| `photo_size` | Width and height of the photo in mm                  | `24`                |
-| `qr_x`       | QR horizontal position in mm from the left edge      | Bottom-right corner |
-| `qr_y`       | QR vertical position in mm from the top edge         | Bottom-right corner |
-| `qr_size`    | Width and height of the QR code in mm                | `32`                |
-| `label`      | Show "Scan to verify" text below the QR (`1` or `0`) | `1`                 |
-| `show_url`   | Show the verification URL below the QR code (`1` or `0`) | `0`             |
-
-If no attributes are provided, the photo and QR code are automatically positioned in opposite bottom corners with a 10 mm margin.
-
-When `show_url="1"`, the full verification URL is printed below the QR code on both the browser preview and the PDF. This provides a fallback for users without a QR code reader.
-
-### Certificate ID
-
-Outputs a unique certificate ID composed of a prefix, the completion timestamp, the post ID, and the user ID.
+### `[cp_ld_certificate]`: the QR code
 
 ```
-[cp_ld_certificate_id prefix="CERT" x="20" y="150" size="4"]
+[cp_ld_certificate qr_x="211" qr_y="148" qr_size="26" show_url="1"]
 ```
 
-| Attribute | Description                                  | Default |
-| --------- | -------------------------------------------- | ------- |
-| `prefix`  | Text prefix for the certificate ID           | `CERT`  |
-| `x`       | Horizontal position in mm from the left edge | —       |
-| `y`       | Vertical position in mm from the top edge    | —       |
-| `size`    | Font size in mm                              | `12`    |
+| Attribute | What it does | Default |
+|---|---|---|
+| `qr_x`, `qr_y` | Where the code goes (mm) | bottom-right corner |
+| `qr_size` | Its size (mm) | 32 |
+| `show_url` | `1` prints the verification link under it | off |
 
-The generated ID follows the format `{PREFIX}-{timestamp}-{post_id}-{user_id}` (e.g. `CERT-1711929600-34179-42`). The timestamp is the Unix time of course, quiz, or group completion. The post ID is the course, quiz, or group ID. If `x` and `y` are omitted, the element is rendered inline without absolute positioning.
-
-## Gutenberg Block
-
-**Certificate Photo Upload** (`cp-ld/photo-upload`)
-
-Add this block to any page. It renders a photo upload form for logged-in learners. The plugin automatically finds the published page containing this block and redirects learners there when they try to access a certificate without a photo on file.
-
-If no page with the block is found, learners are sent to their WordPress profile page instead.
-
-## How It Works
-
-### Photo Requirement
-
-A learner must have a photo on file before they can view any course, quiz, or group certificate. There is no toggle -- it is always enforced. Photos can come from two sources:
-
-- **Gravatar** -- used automatically if the learner's email has one
-- **Custom upload** -- uploaded via the **Certificate Photo Upload** Gutenberg block or the admin profile
-
-Learners change their photo through the Gutenberg block placed on a page. If the learner has a Gravatar, a dropdown in the block lets them choose between Gravatar and a custom upload. Photos cannot be deleted outright -- they can only be replaced by a new upload or reverted to Gravatar (if available).
-
-### Photo Snapshots
-
-When a certificate PDF is generated, the learner's photo is copied to a snapshot directory (`wp-content/uploads/cp-ld-cert-photos/`). The QR verification page shows this snapshot rather than the learner's current photo, so the verification page always matches the PDF.
-
-Snapshots are permanent -- changing the learner's photo afterward will not affect existing certificates or their verification pages. Snapshots are only cleared when an admin permanently deletes the learner's course data in LearnDash, which invalidates the certificate. If the learner re-completes the course (or quiz/group), the next certificate download creates a fresh snapshot with whatever photo is current at that time.
-
-### Photo Change Log
-
-Every photo change (upload, revert to Gravatar) is logged as user meta. The log is visible to admins on the user profile under **Certificate Photo** and records:
-
-- Date and time
-- Action (Uploaded, Reverted to Gravatar)
-- Thumbnail of the previous and new photo
-- Who made the change (self or admin)
-- IP address
-
-Photo snapshots for the log are stored in `wp-content/uploads/cp-ld-photo-log/` so thumbnails remain visible even after the original attachment is replaced.
-
-Admins can delete individual log entries or all entries at once from their own profile. The delete buttons only appear when an admin is viewing their own user profile. Deleting a log entry also removes the associated snapshot files.
-
-### QR Verification
-
-Each certificate PDF includes a QR code that links to a public verification page. When scanned, the page displays:
-
-- The unique certificate ID (matching the ID on the PDF), shown prominently above the verification status
-- The learner's snapshot photo (matching the PDF), first and last name, and email
-- The course, quiz, or group title
-- Completion details (date, progress, score, pass/fail, etc.)
-
-The verification URL uses an HMAC-SHA256 signature derived from the WordPress auth salt. No tokens are stored in the database. The page is never cached by the browser, so it always reflects current completion status.
-
-If the learner's course data has been permanently deleted, the verification page shows an invalid certificate message even if the QR signature is still technically valid.
-
-### PDF Rendering
-
-The plugin hooks into LearnDash's TCPDF certificate generation to draw the learner photo and QR code directly onto the PDF at the positions specified by the shortcode attributes.
-
-### Admin Profile Field
-
-Admins can manage a learner's certificate photo from the user profile screen under the **Certificate Photo** section. If the learner has a Gravatar, a source dropdown allows switching between Gravatar and a custom upload. The photo change log is displayed below.
-
-## Accepted Photo Formats
-
-- JPEG, PNG, WebP
-- Maximum file size: 5 MB
-
-## File Structure
+### `[cp_ld_certificate_id]`: the unique ID
 
 ```
-certificate-photo-verifier-ld/
-  certificate-photo-verifier-ld.php   Main plugin file
-  includes/
-    class-admin.php                User profile photo field, change log, frontend notice
-    class-certificate-gate.php     Photo gating, PDF injection, shortcode, snapshots
-    class-photo-block.php          Gutenberg block registration
-    class-photo-manager.php        Photo upload/storage/retrieval, AJAX, change log
-    class-qrcode.php               Pure PHP QR code generator
-    class-verification.php         Public verification page
-  templates/
-    upload-form.php                Frontend upload form template
-    verify.php                     Verification page template
-  assets/
-    css/
-      frontend.css                 Upload form styles
-    js/
-      frontend.js                  Vanilla JS upload/source handler
-      photo-upload-editor.js       Block editor placeholder
+[cp_ld_certificate_id prefix="FSB" size="4.4"]
 ```
 
-# certificate-photo-verifier-ld
+Prints `FSB-1795464733-6-1` (prefix, completion time, course, learner). The verification page shows the same ID.
 
-# example QR URL:
+| Attribute | What it does | Default |
+|---|---|---|
+| `prefix` | Letters and digits in front | `CERT` |
+| `size` | Font size (mm) | 5 |
 
-http://localhost:10048/?cp_ld_verify=1&uid=3&cid=21&sig=2b1fd50a06bb0220c424
+### `[cp_ld_certificate_status]`: valid, expired or not active
+
+The low-maintenance shortcode for certifications that repeat.
+
+```
+[cp_ld_certificate_status start="2026-01-01" end="2027-01-01"]
+```
+
+| Learner completed… | Prints |
+|---|---|
+| before `start` | `expired` text (default **Expired**) |
+| from `start` up to `end` | `valid` text (default **Valid**) |
+| at or after `end` | `not_active` text (default **Not active**) |
+
+And once `end` has passed, a certificate completed in the period says **Expired** when it's viewed, and its verification page says **Certificate Expired** (*A genuine certificate, valid until …*).
+
+| Attribute | What it does | Default |
+|---|---|---|
+| `start`, `end` | A Unix timestamp, or a date like `2026-12-31 23:59:59` in the site's time zone (Settings → General). `end` itself isn't included. Leave `end` out for "no end yet". | none |
+| `expired`, `valid`, `not_active` | Your own wording | Expired / Valid / Not active |
+| `step` | A lesson or topic ID: use its completion instead of the course's | the course |
+
+```
+[cp_ld_certificate_status start="2026-01-01" end="2027-01-01" valid="Valid through December 31, 2026" expired="EXPIRED – please renew"]
+```
+
+Next year: `start="2027-01-01" end="2028-01-01"`. Nothing else to change: the verification page reads the dates from this shortcode.
+
+### `[cp_ld_approval_number]`: the approval number of the day
+
+On each course, quiz or group, fill in **Approval numbers by date** (one row per period):
+
+![Approval numbers by date](.wordpress-org/screenshot-6.png)
+
+```
+[cp_ld_approval_number before="Approval #: " default="Pending"]
+```
+
+The certificate shows the number whose dates include the completion day: a learner who finished in March 2026 keeps *2526-R0-00164-T3*; one who finished in April gets *2627-R0-00100-T3*. If no period covers the day it prints nothing (or `default`). The verification page shows it too.
+
+### `[cp_ld_certificate_expires]`: an expiry date
+
+```
+[cp_ld_certificate_expires years="1"]          → November 23, 2027
+[cp_ld_certificate_expires days="365" format="d-m-Y"]
+```
+
+### Search box
+
+Put `[cp_ld_certificate_search]` on any page (for example *Verify a Certificate*):
+
+![Search box](.wordpress-org/screenshot-5.png)
+
+## How the addresses work
+
+| What | Address |
+|---|---|
+| Your search page | `https://yoursite.com/verify-a-certificate/` (any page with the shortcode) |
+| After typing an ID | `https://yoursite.com/verify-a-certificate/?certificate_id=FSB-1795464733-6-1` |
+| A real ID goes to | `https://yoursite.com/?cp_ld_verify=1&ctid=FSB-1795464733-6-1` |
+| The QR code opens | `https://yoursite.com/?cp_ld_verify=1&uid=1&cid=6&sig=c148b942e59e31faa99b` |
+
+`sig` is an HMAC-SHA256 signature made with the site's `auth` salt. Nothing extra is stored in the database.
+
+## Moving from eLearning Complete's Certificate Tracker & Verifier
+
+Deactivate *Certificate Tracker for LearnDash* and *Certificate Verifier for LearnDash* and keep everything else as it is:
+
+| The old plugins | Now |
+|---|---|
+| IDs saved in the user meta `elc_certificate_ids` | Still verify, with their original completion date (even after a course is reset and retaken) |
+| `[elc_certificate_id prefix="…"]` | Prints the same IDs as before, and keeps saving them |
+| QR codes from `[su_qrcode]` (Shortcodes Ultimate) with `?certificate_id=` | New ones still carry the ID; old printed ones still work. No second QR code is added to those templates. |
+| The verification page with `[elc_ssc_front_search]` | Becomes the search box; old QR links go straight to the verification page |
+
+The saved record is never deleted, not even when this plugin is.
+
+## A free certificate background
+
+[`samples/certificate-background-landscape.jpg`](samples/certificate-background-landscape.jpg): US Letter landscape, 200 dpi, navy and gold with a seal. Set the certificate to **Letter / Landscape** in its LearnDash settings and make this its featured image. (The HTML it's drawn from is next to it, to change the colours.)
+
+## Optional: a learner photo
+
+**Settings → Certificate Verifier** can require a photo of the learner on certificates and the verification page, uploaded with the **Certificate Photo Upload** block. It's off by default. When it's on, learners without a photo use their Gravatar (loaded from gravatar.com).
+
+## Privacy
+
+The verification page is public by design. It shows the learner's name, the course, completion details, the approval number and (only with photos on) their photo. Never their email address. With the photo off, the plugin contacts no outside service.
+
+## Notes
+
+- Works with LearnDash's built-in PDF certificates. The Certificate Builder add-on isn't supported yet.
+- If the FastDash/SlashDash Toolkit's Certificate Verifier module is active too, use one or the other: the plugin warns on the admin screens.
+
+---
+
+LearnDash is a trademark of its owner. This plugin is independent: it is not made or endorsed by LearnDash, nor by eLearning Complete. GPL-2.0-or-later.

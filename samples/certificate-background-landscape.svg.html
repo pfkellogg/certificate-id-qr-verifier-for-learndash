@@ -1,0 +1,43 @@
+<!doctype html><html><head><style>html,body{margin:0;width:2200px;height:1700px;overflow:hidden}</style></head><body>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1700" viewBox="0 0 2200 1700">
+<defs>
+ <radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#fffdf6"/><stop offset="1" stop-color="#f4ecd6"/></radialGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9cf86"/><stop offset=".45" stop-color="#b8892f"/><stop offset=".7" stop-color="#d9b866"/><stop offset="1" stop-color="#9c7124"/></linearGradient>
+ <g id="corner" fill="none" stroke="url(#gold)" stroke-width="4">
+  <path d="M0 0 h170 M0 0 v170"/>
+  <path d="M20 20 h110 a40 40 0 0 1 -40 40 h-30 v30 a40 40 0 0 1 -40 40 z" stroke-width="3"/>
+  <circle cx="58" cy="58" r="14" fill="url(#gold)" stroke="none"/>
+  <path d="M100 100 q60 -10 90 -70 M100 100 q-10 60 -70 90" stroke-width="3"/>
+  <path d="M150 0 l14 14 l-14 14 l-14 -14 z M0 150 l14 14 l-14 14 l-14 -14 z" fill="url(#gold)" stroke="none"/>
+ </g>
+</defs>
+<rect width="2200" height="1700" fill="url(#paper)"/>
+<!-- faint guilloche rosette behind the text -->
+<g id="ros" transform="translate(1100 820)" fill="none" stroke="#1f3a5f" stroke-opacity=".022" stroke-width="1.5"></g>
+<!-- borders -->
+<rect x="45" y="45" width="2110" height="1610" fill="none" stroke="#1f3a5f" stroke-width="22"/>
+<rect x="78" y="78" width="2044" height="1544" fill="none" stroke="url(#gold)" stroke-width="6"/>
+<rect x="96" y="96" width="2008" height="1508" fill="none" stroke="#1f3a5f" stroke-width="2"/>
+<g transform="translate(110 110)"><use href="#corner"/></g>
+<g transform="translate(2090 110) scale(-1 1)"><use href="#corner"/></g>
+<g transform="translate(110 1590) scale(1 -1)"><use href="#corner"/></g>
+<g transform="translate(2090 1590) scale(-1 -1)"><use href="#corner"/></g>
+<!-- top ornament line -->
+<g fill="url(#gold)"><rect x="880" y="497" width="440" height="3"/><path d="M1100 484 l15 15 l-15 15 l-15 -15 z"/></g>
+<!-- seal, bottom centre -->
+<g transform="translate(1100 1395)">
+ <path d="M-55 70 l-35 130 l45 -25 l25 45 l20 -140 z M55 70 l35 130 l-45 -25 l-25 45 l-20 -140 z" fill="#1f3a5f"/>
+ <g id="burst" fill="url(#gold)"></g>
+ <circle r="98" fill="url(#gold)"/>
+ <circle r="84" fill="none" stroke="#fff7dd" stroke-width="3"/>
+ <circle r="74" fill="none" stroke="#8a6420" stroke-width="2" stroke-dasharray="3 6"/>
+ <path d="M0 -38 l11 23 l25 3 l-18 17 l5 25 l-23 -12 l-23 12 l5 -25 l-18 -17 l25 -3 z" fill="#fff7dd"/>
+</g>
+</svg>
+<script>
+const ns="http://www.w3.org/2000/svg";
+const ros=document.getElementById('ros');
+for(let i=0;i<72;i++){const e=document.createElementNS(ns,'ellipse');e.setAttribute('rx',520);e.setAttribute('ry',170);e.setAttribute('transform',`rotate(${i*2.5})`);ros.appendChild(e);}
+for(let i=0;i<48;i++){const e=document.createElementNS(ns,'ellipse');e.setAttribute('rx',300);e.setAttribute('ry',140);e.setAttribute('transform',`rotate(${i*3.75})`);ros.appendChild(e);}
+const b=document.getElementById('burst');let d='';const n=36;for(let i=0;i<n*2;i++){const r=i%2?100:118,a=i*Math.PI/n;d+=(i?'L':'M')+(r*Math.cos(a)).toFixed(1)+' '+(r*Math.sin(a)).toFixed(1);}const p=document.createElementNS(ns,'path');p.setAttribute('d',d+'Z');b.appendChild(p);
+</script></body></html>

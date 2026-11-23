@@ -231,13 +231,35 @@ class CP_LD_Legacy_ELC {
 		}
 	}
 
+	/**
+	 * The search box's look: the verification card's navy and gold, in a theme's own fonts.
+	 */
+	private static function search_style() {
+		wp_register_style( 'cp-ld-cert-search', false, array(), CP_LD_VERSION );
+		wp_enqueue_style( 'cp-ld-cert-search' );
+		wp_add_inline_style(
+			'cp-ld-cert-search',
+			'.cp-ld-cert-search-wrap{max-width:560px;margin:1.5em 0;padding:24px 26px;border-radius:14px;background:#fff;border:1px solid #e3e8ef;border-top:5px solid #1f3a5f;box-shadow:0 6px 24px rgba(15,35,65,.08)}'
+			. '.cp-ld-cert-search label{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a6420;margin-bottom:8px}'
+			. '.cp-ld-cert-search-row{display:flex;gap:10px;flex-wrap:wrap}'
+			. '.cp-ld-cert-search input[type=text]{flex:1 1 240px;min-width:0;font:600 17px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;padding:12px 14px;border:2px solid #cfd8e3;border-radius:10px;background:#fbfcfe;color:#1a202c}'
+			. '.cp-ld-cert-search input[type=text]:focus{outline:none;border-color:#1f3a5f;box-shadow:0 0 0 3px rgba(31,58,95,.15)}'
+			. '.cp-ld-cert-search button{font-size:16px;font-weight:700;padding:12px 26px;border:0;border-radius:10px;background:#1f3a5f;color:#fff;cursor:pointer}'
+			. '.cp-ld-cert-search button:hover,.cp-ld-cert-search button:focus{background:#8a6420}'
+			. '.cp-ld-cert-search-help{margin:10px 0 0;font-size:14px;color:#64748b}'
+			. '.cp-ld-cert-search-none{margin:14px 0 0;padding:10px 14px;border-radius:10px;background:#fef2f2;color:#7f1d1d;font-weight:600}'
+		);
+	}
+
 	public function search_shortcode() {
+		self::search_style();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public lookup.
 		$asked = isset( $_GET['certificate_id'] ) ? sanitize_text_field( wp_unslash( $_GET['certificate_id'] ) ) : '';
 		$html  = '<form class="cp-ld-cert-search" method="get" action="' . esc_url( get_permalink() ) . '">'
 			. '<label for="cp-ld-cert-search-id">' . esc_html__( 'Certificate ID', 'certificate-id-qr-verifier-for-learndash' ) . '</label> '
-			. '<input type="text" id="cp-ld-cert-search-id" name="certificate_id" maxlength="80" size="28" value="' . esc_attr( $asked ) . '" required /> '
-			. '<button type="submit" class="button">' . esc_html__( 'Verify', 'certificate-id-qr-verifier-for-learndash' ) . '</button>'
+			. '<div class="cp-ld-cert-search-row"><input type="text" id="cp-ld-cert-search-id" name="certificate_id" maxlength="80" size="28" value="' . esc_attr( $asked ) . '" placeholder="CERT-1795464733-6-1" autocomplete="off" required />'
+			. '<button type="submit">' . esc_html__( 'Verify', 'certificate-id-qr-verifier-for-learndash' ) . '</button></div>'
+			. '<p class="cp-ld-cert-search-help">' . esc_html__( 'Type the ID printed on the certificate, or scan its QR code.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>'
 			. '</form>';
 		if ( '' !== $asked ) {
 			// A real ID was sent on to its verification page before the page loaded, so this one wasn't found.

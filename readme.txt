@@ -12,6 +12,8 @@ Puts a unique ID and a scannable QR code on LearnDash certificates. Anyone can s
 
 == Description ==
 
+Made by Patrick Kellogg, founder of eLearning Complete (no longer affiliated with it), who wrote the first certificate tracker and verifier for LearnDash.
+
 A certificate is only worth something if people can trust it. This plugin adds two things to every LearnDash certificate:
 
 * **A QR code.** Scan it with any phone camera and it opens a public page on your site that says **Certificate Verified**, with the learner's name, the course (or quiz, or group), and when it was completed.
@@ -67,6 +69,10 @@ This plugin replaces the older pair **Certificate Tracker for LearnDash** and **
 
 The saved record is never deleted, not even when this plugin is deleted.
 
+= A free certificate background =
+
+The plugin's GitHub page has a landscape certificate background (US Letter, navy and gold, with a seal) that you can use as the certificate's featured image: https://github.com/pfkellogg/certificate-id-qr-verifier-for-learndash
+
 = Optional: a learner photo =
 
 Under **Settings → Certificate Verifier** you can also require a photo of the learner: certificates then show it, the verification page shows it too, and learners without a photo are asked to upload one (with the **Certificate Photo Upload** block) before they can download a certificate. The photo is frozen on each certificate when it's first issued, and photo changes are logged. It's off unless you switch it on.
@@ -77,7 +83,7 @@ The verification page is public, by design: anyone who sees a certificate can sc
 
 When the photo is switched on and a learner hasn't uploaded one, their Gravatar is used if they have one: the plugin then loads it from Gravatar (gravatar.com, by Automattic; see https://automattic.com/privacy/). With the photo off (the default) the plugin contacts no outside service.
 
-LearnDash is a trademark of its owner. This plugin is independent: it is not made or endorsed by LearnDash.
+LearnDash is a trademark of its owner. This plugin is independent: it is not made or endorsed by LearnDash, nor by eLearning Complete.
 
 == Installation ==
 
@@ -117,9 +123,12 @@ Use one or the other: with both active, certificates would get two QR codes. The
 
 == Screenshots ==
 
-1. A certificate with its ID and QR code.
-2. The verification page after scanning: Certificate Verified.
-3. A forged or changed link: Certificate could not be verified.
+1. A landscape certificate with its ID, approval number, status and QR code (the sample background from the plugin's GitHub page).
+2. The verification page after scanning: Certificate Verified, valid until the end of its period.
+3. The same certificate after its period ended: Certificate Expired, and still marked as genuine.
+4. A forged or changed link: Certificate could not be verified.
+5. The search box, [cp_ld_certificate_search]: type an ID to check it.
+6. Approval numbers by date, on the course edit screen.
 
 == Changelog ==
 
