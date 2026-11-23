@@ -32,12 +32,14 @@ require_once CP_LD_DIR . 'includes/class-verification.php';
 require_once CP_LD_DIR . 'includes/class-admin.php';
 require_once CP_LD_DIR . 'includes/class-photo-block.php';
 require_once CP_LD_DIR . 'includes/class-settings.php';
+require_once CP_LD_DIR . 'includes/class-legacy-elc.php';
 
 new CP_LD_Photo_Manager();
 new CP_LD_Certificate_Gate();
 new CP_LD_Verification();
 new CP_LD_Admin();
 new CP_LD_Photo_Block();
+new CP_LD_Legacy_ELC();
 new CP_LD_Settings();
 
 register_activation_hook( __FILE__, 'cp_ld_activate' );

@@ -153,6 +153,11 @@ class CP_LD_Certificate_Gate {
 		}
 
 		// ---- QR code ----
+		// A template that already has the old eLearning Complete QR code ([su_qrcode], with the certificate ID) and
+		// none of this plugin's shortcodes keeps just that one.
+		if ( false !== strpos( $raw_content, '[su_qrcode' ) && false === strpos( $raw_content, '[cp_ld_certificate' ) ) {
+			return;
+		}
 		$qr_size = self::opt( $sc, 'qr_size', 32 );
 		$qr_x    = self::opt( $sc, 'qr_x',    $page_w - $margin - $qr_size );
 		$qr_y    = self::opt( $sc, 'qr_y',    $page_h - $margin - $qr_size - 8 );

@@ -28,6 +28,21 @@ With no setup, every certificate gets the QR code in the bottom-right corner, la
 * `[cp_ld_certificate qr_x="240" qr_y="155" qr_size="36" show_url="1"]` — where the QR code goes, its size, and (with `show_url="1"`) the verification link printed under it.
 * `[cp_ld_certificate_id prefix="FSB" size="5"]` — the certificate ID, with your own prefix (CERT if you leave it out). The verification page shows the same ID.
 
+= A verification page with a search box =
+
+Put `[cp_ld_certificate_search]` on a page: visitors type a certificate ID and go to its verification page.
+
+= Replacing eLearning Complete's Certificate Tracker and Certificate Verifier =
+
+This plugin replaces the older pair **Certificate Tracker for LearnDash** and **Certificate Verifier for LearnDash** (eLearning Complete). Switch them off and everything they made keeps working:
+
+* Every certificate ID they issued still verifies. It is read from the learner's saved record (the `elc_certificate_ids` user meta), with its original completion date, even if the course was reset and taken again later.
+* `[elc_certificate_id prefix="..."]` in your certificate templates prints the same IDs as before.
+* QR codes printed with `[su_qrcode]` (Shortcodes Ultimate) still carry the certificate ID, and the old codes on certificates already issued still work: your page with `[elc_ssc_front_search]` becomes the search box and sends them to the verification page.
+* Where a template has that old QR code, this plugin doesn't add a second one.
+
+The saved record is never deleted, not even when this plugin is deleted.
+
 = Optional: a learner photo =
 
 Under **Settings → Certificate Verifier** you can also require a photo of the learner: certificates then show it, the verification page shows it too, and learners without a photo are asked to upload one (with the **Certificate Photo Upload** block) before they can download a certificate. The photo is frozen on each certificate when it's first issued, and photo changes are logged. It's off unless you switch it on.
@@ -64,6 +79,10 @@ No: the link carries a signature made with your site's secret keys. Any change t
 
 No. Only administrators, and group leaders for their own groups' learners, can look at another learner's certificate.
 
+= I used eLearning Complete's Certificate Tracker and Verifier =
+
+Deactivate them and keep your templates and verification page as they are: see "Replacing eLearning Complete's Certificate Tracker and Certificate Verifier" above.
+
 = I use the FastDash / SlashDash Toolkit's Certificate Verifier module =
 
 Use one or the other: with both active, certificates would get two QR codes. The plugin warns you on the admin screens.
@@ -85,6 +104,8 @@ Use one or the other: with both active, certificates would get two QR codes. The
 * Only administrators and group leaders can view another learner's certificate.
 * The verification link under the QR code fits on the page.
 * All text can be translated; settings are removed when the plugin is deleted.
+* Replaces eLearning Complete's Certificate Tracker and Certificate Verifier for LearnDash: their saved IDs, shortcodes and QR codes keep working.
+* New: `[cp_ld_certificate_search]`, a search box for certificate IDs.
 
 = 1.1.0 =
 * Certificate ID on the verification page; show_url option.

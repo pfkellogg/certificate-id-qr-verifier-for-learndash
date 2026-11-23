@@ -208,7 +208,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- Certificate ID -->
 		<?php
-		$cert_code = CP_LD_Certificate_Gate::certificate_id( $user_id, $course_id ); // (the same ID as on the certificate)
+		$cert_code = ! empty( $cert_code_from_id ) ? $cert_code_from_id : CP_LD_Certificate_Gate::certificate_id( $user_id, $course_id ); // (the same ID as on the certificate)
 		if ( $cert_code ) : ?>
 		<div style="text-align:center;padding:14px 28px;border-bottom:1px solid #e8edf2;font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#1a202c;letter-spacing:.03em;">
 			<?php echo esc_html( $cert_code ); ?>

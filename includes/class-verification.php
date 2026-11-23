@@ -45,13 +45,22 @@ class CP_LD_Verification {
 		$course_id = isset( $_GET['cid'] ) ? (int) $_GET['cid'] : 0;
 		$sig       = isset( $_GET['sig'] ) ? sanitize_text_field( wp_unslash( $_GET['sig'] ) ) : '';
 
+		// Or a certificate ID (?ctid=..., from the search box or an old eLearning Complete QR code).
+		$ctid      = isset( $_GET['ctid'] ) ? sanitize_text_field( wp_unslash( $_GET['ctid'] ) ) : '';
+		$found     = '' !== $ctid ? CP_LD_Legacy_ELC::find( $ctid ) : null;
+		$cert_code_from_id = '';
+		if ( '' !== $ctid ) {
+			$user_id   = $found ? $found['user_id'] : 0;
+			$course_id = $found ? $found['post_id'] : 0;
+		}
+
 		$valid          = false;
 		$user           = null;
 		$post           = null;       // The course, quiz, or group post object.
 		$post_type      = '';         // 'course', 'quiz', or 'group'
 		$completion     = array();    // Structured completion details for the template.
 
-		if ( $user_id && self::verify_signature( $user_id, $course_id, $sig ) ) {
+		if ( $user_id && ( $found || self::verify_signature( $user_id, $course_id, $sig ) ) ) {
 			$user  = get_userdata( $user_id );
 			$valid = (bool) $user;
 
@@ -72,6 +81,18 @@ class CP_LD_Verification {
 						$post_type  = 'group';
 						$completion = self::group_completion( $user_id, $course_id );
 						break;
+				}
+
+				// An ID from the learner's saved certificate record (the old plugin) is the proof itself, with its own
+				// completion time: it stays valid after a course is reset and retaken (recertification).
+				if ( $found && $found['legacy'] ) {
+					$cert_code_from_id = $found['id'];
+					if ( $found['timestamp'] ) {
+						$completion['completed_date'] = date_i18n( get_option( 'date_format' ), $found['timestamp'] );
+						$completion['completed_time'] = date_i18n( get_option( 'time_format' ), $found['timestamp'] );
+					}
+				} elseif ( $found ) {
+					$cert_code_from_id = $found['id'];
 				}
 
 				// No completion data means course data was deleted.
