@@ -8,6 +8,11 @@
  * [cp_ld_approval_number] prints the right one. The verification page shows it too.
  *
  * [cp_ld_certificate_expires days="365"] (or years="3") prints when the certificate expires.
+ *
+ * [cp_ld_certificate_status start=".." end=".."] prints one of three texts, depending on when the learner completed:
+ * before start → expired="..", from start up to (not including) end → valid="..", from end on → not_active="..".
+ * Only start and end change when a period ends. They take a Unix timestamp or a date ("2026-12-31 23:59:59") read in
+ * the site's time zone (Settings → General). step=".." uses that lesson's or topic's completion instead of the course's.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +28,7 @@ class CP_LD_Approvals {
 		add_action( 'save_post', array( $this, 'save_box' ), 10, 2 );
 		add_shortcode( 'cp_ld_approval_number', array( $this, 'approval_shortcode' ) );
 		add_shortcode( 'cp_ld_certificate_expires', array( $this, 'expires_shortcode' ) );
+		add_shortcode( 'cp_ld_certificate_status', array( $this, 'status_shortcode' ) );
 	}
 
 	private static function post_types() {
@@ -117,6 +123,85 @@ class CP_LD_Approvals {
 			return '';
 		}
 		return esc_html( wp_date( $atts['format'], $date->getTimestamp() ) );
+	}
+
+	/**
+	 * A moment from a shortcode attribute: digits are a Unix timestamp; anything else is a date and time in the
+	 * site's time zone.
+	 *
+	 * @return int|null null when it's empty or not a date.
+	 */
+	public static function moment( $value ) {
+		$value = trim( (string) $value );
+		if ( '' === $value ) {
+			return null;
+		}
+		if ( preg_match( '/^-?\d+$/', $value ) ) {
+			return (int) $value;
+		}
+		try {
+			return ( new DateTimeImmutable( $value, wp_timezone() ) )->getTimestamp();
+		} catch ( Exception $e ) {
+			return null;
+		}
+	}
+
+	/**
+	 * When the learner completed a lesson or topic (LearnDash's activity log), or 0.
+	 */
+	public static function step_completion( $user_id, $step_id ) {
+		if ( ! function_exists( 'learndash_get_user_activity' ) ) {
+			return 0;
+		}
+		$type = str_replace( array( 'sfwd-lessons', 'sfwd-topic' ), array( 'lesson', 'topic' ), (string) get_post_type( $step_id ) );
+		if ( ! in_array( $type, array( 'lesson', 'topic' ), true ) ) {
+			return 0;
+		}
+		$args = array(
+			'user_id'       => (int) $user_id,
+			'post_id'       => (int) $step_id,
+			'activity_type' => $type,
+		);
+		if ( function_exists( 'learndash_get_course_id' ) ) {
+			$args['course_id'] = (int) learndash_get_course_id( $step_id );
+		}
+		$activity = learndash_get_user_activity( $args );
+		return ( $activity && ! empty( $activity->activity_completed ) ) ? (int) $activity->activity_completed : 0;
+	}
+
+	public function status_shortcode( $atts ) {
+		$atts    = shortcode_atts(
+			array(
+				'start'      => '',
+				'end'        => '',
+				'expired'    => __( 'Expired', 'certificate-id-qr-verifier-for-learndash' ),
+				'valid'      => __( 'Valid', 'certificate-id-qr-verifier-for-learndash' ),
+				'not_active' => __( 'Not active', 'certificate-id-qr-verifier-for-learndash' ),
+				'step'       => '', // a lesson or topic ID: its completion instead of the course's
+			),
+			$atts,
+			'cp_ld_certificate_status'
+		);
+		$context = CP_LD_Certificate_Gate::certificate_context();
+		if ( ! $context ) {
+			return '';
+		}
+		$completed = absint( $atts['step'] )
+			? self::step_completion( $context['user_id'], absint( $atts['step'] ) )
+			: CP_LD_Certificate_Gate::get_completion_timestamp( $context['user_id'], $context['post_id'] );
+		if ( ! $completed ) {
+			return '';
+		}
+		$start = self::moment( $atts['start'] );
+		$end   = self::moment( $atts['end'] );
+		if ( null !== $start && $completed < $start ) {
+			$text = $atts['expired'];
+		} elseif ( null === $end || $completed < $end ) {
+			$text = $atts['valid'];
+		} else {
+			$text = $atts['not_active'];
+		}
+		return esc_html( $text );
 	}
 
 	// -----------------------------------------------------------------------

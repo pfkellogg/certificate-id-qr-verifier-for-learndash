@@ -38,6 +38,18 @@ On each course (or quiz, or group) fill in **Approval numbers by date**: one row
 
 `[cp_ld_certificate_expires years="1"]` (or `days="365"`, and `format="d-m-Y"`) prints when the certificate expires, counted from the completion date.
 
+= Valid, expired or not active: a low-maintenance status =
+
+`[cp_ld_certificate_status start="..." end="..."]` in a certificate prints one of three texts, depending on when the learner completed:
+
+* completed before `start`: **Expired** (or your text in `expired="..."`)
+* from `start` up to (not including) `end`: **Valid** (or `valid="..."`)
+* at `end` or later: **Not active** (or `not_active="..."`)
+
+`start` and `end` take a Unix timestamp (`1767225600`) or a date and time (`2026-12-31 23:59:59`), read in your site's time zone (Settings → General). When a period ends, only the two dates change. Leave out `end` for "no end yet". Add `step="123"` to use the completion of lesson or topic 123 instead of the course's.
+
+Example: `[cp_ld_certificate_status start="2026-01-01" end="2027-01-01" expired="Expired" valid="Valid through Dec 31, 2026" not_active="Not yet active"]`
+
 = A verification page with a search box =
 
 Put `[cp_ld_certificate_search]` on a page: visitors type a certificate ID and go to its verification page.
@@ -122,6 +134,7 @@ Use one or the other: with both active, certificates would get two QR codes. The
 * New: `[cp_ld_certificate_search]`, a search box for certificate IDs.
 * New: approval numbers by date on courses, quizzes and groups, with `[cp_ld_approval_number]`, also shown on the verification page.
 * New: `[cp_ld_certificate_expires]`.
+* New: `[cp_ld_certificate_status start end]`: Expired, Valid or Not active (or your own texts), from the completion time of the course, quiz, group, lesson or topic.
 
 = 1.1.0 =
 * Certificate ID on the verification page; show_url option.
