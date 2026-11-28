@@ -5,12 +5,12 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$user_id      = get_current_user_id();
-$photo_url    = CP_LD_Photo_Manager::get_photo_url( $user_id, 'medium' );
-$has_upload   = CP_LD_Photo_Manager::has_uploaded_photo( $user_id );
-$gravatar_url = CP_LD_Photo_Manager::get_gravatar_url( $user_id );
-$has_gravatar = (bool) $gravatar_url;
-$source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' );
+$cp_ld_user_id      = get_current_user_id();
+$cp_ld_photo_url    = CP_LD_Photo_Manager::get_photo_url( $cp_ld_user_id, 'medium' );
+$cp_ld_has_upload   = CP_LD_Photo_Manager::has_uploaded_photo( $cp_ld_user_id );
+$cp_ld_gravatar_url = CP_LD_Photo_Manager::get_gravatar_url( $cp_ld_user_id );
+$cp_ld_has_gravatar = (bool) $cp_ld_gravatar_url;
+$cp_ld_source       = $cp_ld_has_upload ? 'custom' : ( $cp_ld_has_gravatar ? 'gravatar' : 'none' );
 ?>
 <div class="cp-ld-upload-wrap" id="cp-ld-upload-wrap">
 
@@ -29,9 +29,9 @@ $source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' )
 		</p>
 
 		<div class="cp-ld-photo-preview-wrap">
-			<?php if ( $photo_url ) : ?>
+			<?php if ( $cp_ld_photo_url ) : ?>
 				<img id="cp-ld-preview-img"
-					src="<?php echo esc_url( $photo_url ); ?>"
+					src="<?php echo esc_url( $cp_ld_photo_url ); ?>"
 					alt="<?php esc_attr_e( 'Your certificate photo', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>"
 					class="cp-ld-photo-preview" />
 			<?php else : ?>
@@ -47,23 +47,23 @@ $source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' )
 			<?php endif; ?>
 		</div>
 
-		<?php if ( $has_gravatar ) : ?>
+		<?php if ( $cp_ld_has_gravatar ) : ?>
 			<div class="cp-ld-upload-controls" style="margin-bottom:12px;">
 				<label for="cp-ld-source" style="font-weight:600;font-size:14px;margin-right:8px;">
 					<?php esc_html_e( 'Photo source:', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 				</label>
 				<select id="cp-ld-source" style="min-width:180px;">
-					<option value="gravatar" <?php selected( $source, 'gravatar' ); ?>>
+					<option value="gravatar" <?php selected( $cp_ld_source, 'gravatar' ); ?>>
 						<?php esc_html_e( 'Gravatar', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 					</option>
-					<option value="custom" <?php selected( $source, 'custom' ); ?>>
+					<option value="custom" <?php selected( $cp_ld_source, 'custom' ); ?>>
 						<?php esc_html_e( 'Custom Photo', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 					</option>
 				</select>
 			</div>
 		<?php endif; ?>
 
-		<div class="cp-ld-upload-controls" id="cp-ld-upload-row" <?php if ( $has_gravatar && $source === 'gravatar' ) echo 'style="display:none;"'; ?>>
+		<div class="cp-ld-upload-controls" id="cp-ld-upload-row" <?php if ( $cp_ld_has_gravatar && $cp_ld_source === 'gravatar' ) echo 'style="display:none;"'; ?>>
 			<label class="cp-ld-btn cp-ld-btn--primary" for="cp-ld-file-input">
 				<?php esc_html_e( 'Change Photo', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 			</label>
@@ -74,7 +74,7 @@ $source       = $has_upload ? 'custom' : ( $has_gravatar ? 'gravatar' : 'none' )
 				class="cp-ld-file-input" />
 		</div>
 
-		<p class="cp-ld-hint" id="cp-ld-hint" <?php if ( $has_gravatar && $source === 'gravatar' ) echo 'style="display:none;"'; ?>>
+		<p class="cp-ld-hint" id="cp-ld-hint" <?php if ( $cp_ld_has_gravatar && $cp_ld_source === 'gravatar' ) echo 'style="display:none;"'; ?>>
 			<?php esc_html_e( 'Accepted: JPEG, PNG, WebP. Maximum size: 5 MB.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 		</p>
 

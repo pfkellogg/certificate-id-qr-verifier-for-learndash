@@ -171,30 +171,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="vc-body">
 
 	<?php if ( $valid && $user ) :
-		$bypass_photo = CP_LD_Settings::is_photo_bypassed();
-		$photo_url    = '';
-		if ( ! $bypass_photo ) {
-			$photo_url = CP_LD_Certificate_Gate::get_snapshot_photo_url( $user->ID, $course_id );
-			if ( ! $photo_url ) {
-				$photo_url = CP_LD_Photo_Manager::get_photo_url( $user->ID, 'medium' );
+		$cp_ld_bypass_photo = CP_LD_Settings::is_photo_bypassed();
+		$cp_ld_photo_url    = '';
+		if ( ! $cp_ld_bypass_photo ) {
+			$cp_ld_photo_url = CP_LD_Certificate_Gate::get_snapshot_photo_url( $user->ID, $course_id );
+			if ( ! $cp_ld_photo_url ) {
+				$cp_ld_photo_url = CP_LD_Photo_Manager::get_photo_url( $user->ID, 'medium' );
 			}
 		}
 	?>
 
 		<!-- Identity -->
 		<div class="vc-identity">
-			<?php if ( $photo_url ) : ?>
+			<?php if ( $cp_ld_photo_url ) : ?>
 				<img class="vc-photo"
-					src="<?php echo esc_url( $photo_url ); ?>"
+					src="<?php echo esc_url( $cp_ld_photo_url ); ?>"
 					alt="<?php echo esc_attr( $user->display_name ); ?>" />
-			<?php elseif ( ! $bypass_photo ) : ?>
+			<?php elseif ( ! $cp_ld_bypass_photo ) : ?>
 				<div class="vc-no-photo" aria-hidden="true">👤</div>
 			<?php endif; ?>
 			<div>
 				<?php
-				$full_name = trim( $user->first_name . ' ' . $user->last_name );
+				$cp_ld_full_name = trim( $user->first_name . ' ' . $user->last_name );
 				?>
-				<div class="vc-identity__name"><?php echo esc_html( $full_name ?: $user->display_name ); ?></div>
+				<div class="vc-identity__name"><?php echo esc_html( $cp_ld_full_name ?: $user->display_name ); ?></div>
 				<?php /* (no email: this page is public, anyone who sees the certificate can open it) */ ?>
 				<div class="vc-identity__since">
 					<?php
@@ -210,41 +210,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- Certificate ID -->
 		<?php
-		$cert_code = ! empty( $cert_code_from_id ) ? $cert_code_from_id : CP_LD_Certificate_Gate::certificate_id( $user_id, $course_id ); // (the same ID as on the certificate)
-		if ( $cert_code ) : ?>
+		$cp_ld_cert_code = ! empty( $cert_code_from_id ) ? $cert_code_from_id : CP_LD_Certificate_Gate::certificate_id( $user_id, $course_id ); // (the same ID as on the certificate)
+		if ( $cp_ld_cert_code ) : ?>
 		<div style="text-align:center;padding:14px 28px;border-bottom:1px solid #e8edf2;font-family:'Courier New',Courier,monospace;font-size:15px;font-weight:700;color:#1a202c;letter-spacing:.03em;">
-			<?php echo esc_html( $cert_code ); ?>
+			<?php echo esc_html( $cp_ld_cert_code ); ?>
 		</div>
 		<?php endif; ?>
 
 		<!-- Status -->
 		<?php
-		$vc_state = $cert_status ? $cert_status['status'] : 'valid';
-		$vc_df    = get_option( 'date_format' );
-		if ( 'valid' === $vc_state ) : ?>
+		$cp_ld_vc_state = $cert_status ? $cert_status['status'] : 'valid';
+		$cp_ld_vc_df    = get_option( 'date_format' );
+		if ( 'valid' === $cp_ld_vc_state ) : ?>
 		<div class="vc-status vc-status--valid">
 			<span class="vc-status__icon">✅</span>
 			<?php esc_html_e( 'Certificate Verified', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 			<?php if ( $cert_status && null !== $cert_status['end'] ) : ?>
 			<span class="vc-status__note"><?php
 				/* translators: %s: the last day the certificate is valid */
-				echo esc_html( sprintf( __( 'Valid until %s', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) ); ?></span>
+				echo esc_html( sprintf( __( 'Valid until %s', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $cp_ld_vc_df, $cert_status['end'] - 1 ) ) ); ?></span>
 			<?php endif; ?>
 		</div>
 		<?php else : ?>
 		<div class="vc-status vc-status--expired">
 			<span class="vc-status__icon">⏰</span>
-			<?php 'expired' === $vc_state ? esc_html_e( 'Certificate Expired', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) : esc_html_e( 'Certificate Not Active', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
+			<?php 'expired' === $cp_ld_vc_state ? esc_html_e( 'Certificate Expired', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) : esc_html_e( 'Certificate Not Active', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 			<span class="vc-status__note"><?php
-			if ( 'expired' === $vc_state && null !== $cert_status['end'] && time() >= $cert_status['end'] ) {
+			if ( 'expired' === $cp_ld_vc_state && null !== $cert_status['end'] && time() >= $cert_status['end'] ) {
 				/* translators: %s: the last day the certificate was valid */
-				echo esc_html( sprintf( __( 'A genuine certificate, valid until %s.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) );
-			} elseif ( 'expired' === $vc_state ) {
+				echo esc_html( sprintf( __( 'A genuine certificate, valid until %s.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $cp_ld_vc_df, $cert_status['end'] - 1 ) ) );
+			} elseif ( 'expired' === $cp_ld_vc_state ) {
 				/* translators: %s: the first day of the current period */
-				echo esc_html( sprintf( __( 'A genuine certificate, completed before the current period began (%s).', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['start'] ) ) );
+				echo esc_html( sprintf( __( 'A genuine certificate, completed before the current period began (%s).', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $cp_ld_vc_df, $cert_status['start'] ) ) );
 			} else {
 				/* translators: %s: the last day of the period */
-				echo esc_html( sprintf( __( 'A genuine certificate, completed after its period ended (%s).', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $vc_df, $cert_status['end'] - 1 ) ) );
+				echo esc_html( sprintf( __( 'A genuine certificate, completed after its period ended (%s).', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), wp_date( $cp_ld_vc_df, $cert_status['end'] - 1 ) ) );
 			}
 			?></span>
 		</div>
@@ -277,11 +277,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<?php
-				$excerpt = get_the_excerpt( $post );
-				if ( $excerpt ) : ?>
+				$cp_ld_excerpt = get_the_excerpt( $post );
+				if ( $cp_ld_excerpt ) : ?>
 				<div class="vc-row">
 					<span class="vc-row__label"><?php esc_html_e( 'Description', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></span>
-					<span class="vc-row__value" style="font-weight:400;color:#4a5568;"><?php echo esc_html( wp_trim_words( $excerpt, 20 ) ); ?></span>
+					<span class="vc-row__value" style="font-weight:400;color:#4a5568;"><?php echo esc_html( wp_trim_words( $cp_ld_excerpt, 20 ) ); ?></span>
 				</div>
 				<?php endif; ?>
 
@@ -394,8 +394,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div style="padding: 6px 0;">
 						<div class="vc-section__heading" style="margin-bottom:6px;"><?php esc_html_e( 'Completed courses', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></div>
 						<ul class="vc-course-list">
-							<?php foreach ( $completion['completed_courses'] as $c ) : ?>
-								<li><span>✅</span><?php echo esc_html( $c ); ?></li>
+							<?php foreach ( $completion['completed_courses'] as $cp_ld_c ) : ?>
+								<li><span>✅</span><?php echo esc_html( $cp_ld_c ); ?></li>
 							<?php endforeach; ?>
 						</ul>
 					</div>
