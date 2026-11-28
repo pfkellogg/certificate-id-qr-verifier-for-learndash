@@ -23,8 +23,8 @@ class CP_LD_Settings {
 
 	public function add_menu() {
 		add_options_page(
-			__( 'Certificate ID & QR Verifier', 'certificate-id-qr-verifier-for-learndash' ),
-			__( 'Certificate Verifier', 'certificate-id-qr-verifier-for-learndash' ),
+			__( 'Certificate ID & QR Verifier', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
+			__( 'Certificate Verifier', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 			'manage_options',
 			'cp-ld-settings',
 			array( $this, 'render_page' )
@@ -46,7 +46,7 @@ class CP_LD_Settings {
 	public function ajax_save_bypass() {
 		check_ajax_referer( 'cp_ld_bypass_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		$value = isset( $_POST['bypass'] ) ? rest_sanitize_boolean( $_POST['bypass'] ) : false;
 		update_option( self::OPTION_BYPASS, $value );
@@ -59,7 +59,7 @@ class CP_LD_Settings {
 	public function ajax_get_photo_logs() {
 		check_ajax_referer( 'cp_ld_bypass_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		$page     = isset( $_POST['page'] )     ? max( 1, (int) $_POST['page'] ) : 1;
@@ -168,9 +168,9 @@ class CP_LD_Settings {
 
 				$action_label = '';
 				switch ( $entry['action'] ) {
-					case 'upload':          $action_label = __( 'Uploaded', 'certificate-id-qr-verifier-for-learndash' ); break;
-					case 'revert_gravatar': $action_label = __( 'Reverted to Gravatar', 'certificate-id-qr-verifier-for-learndash' ); break;
-					default:                $action_label = __( 'Deleted', 'certificate-id-qr-verifier-for-learndash' ); break;
+					case 'upload':          $action_label = __( 'Uploaded', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); break;
+					case 'revert_gravatar': $action_label = __( 'Reverted to Gravatar', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); break;
+					default:                $action_label = __( 'Deleted', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); break;
 				}
 
 				$entries[] = array(
@@ -178,7 +178,7 @@ class CP_LD_Settings {
 					'action'     => $action_label,
 					'old_snap'   => $old_snap,
 					'new_snap'   => $new_snap,
-					'changed_by' => $entry['changed_by'] === 'admin' ? __( 'Admin', 'certificate-id-qr-verifier-for-learndash' ) : __( 'Self', 'certificate-id-qr-verifier-for-learndash' ),
+					'changed_by' => $entry['changed_by'] === 'admin' ? __( 'Admin', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) : __( 'Self', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 					'ip'         => $entry['ip'],
 				);
 			}
@@ -209,12 +209,12 @@ class CP_LD_Settings {
 	public function ajax_delete_user_log() {
 		check_ajax_referer( 'cp_ld_bypass_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
 		if ( ! $user_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid user.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid user.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 
 		$log = CP_LD_Photo_Manager::get_log( $user_id );
@@ -543,7 +543,7 @@ class CP_LD_Settings {
 		</style>
 
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Certificate Photo Verifier Settings', 'certificate-id-qr-verifier-for-learndash' ); ?></h1>
+			<h1><?php esc_html_e( 'Certificate Photo Verifier Settings', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></h1>
 
 			<div class="cp-ld-settings">
 
@@ -553,19 +553,19 @@ class CP_LD_Settings {
 						<span id="cp-ld-mode-icon"><?php echo $bypass ? '&#9888;' : '&#9989;'; ?></span>
 					</div>
 					<div>
-						<div class="cp-ld-mode__label"><?php esc_html_e( 'Current Mode', 'certificate-id-qr-verifier-for-learndash' ); ?></div>
+						<div class="cp-ld-mode__label"><?php esc_html_e( 'Current Mode', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></div>
 						<div class="cp-ld-mode__title" id="cp-ld-mode-title">
 							<?php echo $bypass
-								? esc_html__( 'Photo Not Required', 'certificate-id-qr-verifier-for-learndash' )
-								: esc_html__( 'Photo Required', 'certificate-id-qr-verifier-for-learndash' ); ?>
+								? esc_html__( 'Photo Not Required', 'aikellogg-certificate-id-qr-verifier-for-learndash' )
+								: esc_html__( 'Photo Required', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 						</div>
 						<div class="cp-ld-mode__desc" id="cp-ld-mode-desc">
 							<?php echo $bypass
-								? esc_html__( 'Learners can view certificates without a photo. The verification page does not display a photo.', 'certificate-id-qr-verifier-for-learndash' )
-								: esc_html__( 'Learners must have a photo on file before viewing any certificate. The verification page displays their photo.', 'certificate-id-qr-verifier-for-learndash' ); ?>
+								? esc_html__( 'Learners can view certificates without a photo. The verification page does not display a photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' )
+								: esc_html__( 'Learners must have a photo on file before viewing any certificate. The verification page displays their photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 						</div>
 					</div>
-					<div class="cp-ld-mode__saved" id="cp-ld-saved-toast"><?php esc_html_e( 'Saved', 'certificate-id-qr-verifier-for-learndash' ); ?></div>
+					<div class="cp-ld-mode__saved" id="cp-ld-saved-toast"><?php esc_html_e( 'Saved', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></div>
 				</div>
 
 				<!-- Checkbox -->
@@ -575,7 +575,7 @@ class CP_LD_Settings {
 							id="cp_ld_bypass_photo"
 							value="1"
 							<?php checked( $bypass ); ?> />
-						<?php esc_html_e( 'No learner photo (QR code and ID only)', 'certificate-id-qr-verifier-for-learndash' ); ?>
+						<?php esc_html_e( 'No learner photo (QR code and ID only)', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 					</label>
 				</div>
 
@@ -584,24 +584,24 @@ class CP_LD_Settings {
 					<div class="cp-ld-warning">
 						<div class="cp-ld-warning__header">
 							<span>&#9888;</span>
-							<strong><?php esc_html_e( 'Are you sure you want to do this?', 'certificate-id-qr-verifier-for-learndash' ); ?></strong>
+							<strong><?php esc_html_e( 'Are you sure you want to do this?', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></strong>
 						</div>
 						<div class="cp-ld-warning__body">
-							<p><?php esc_html_e( 'This will no longer require a user to have a photo when viewing a certificate and will not display a photo on the verification page landed on by the QR code.', 'certificate-id-qr-verifier-for-learndash' ); ?></p>
+							<p><?php esc_html_e( 'This will no longer require a user to have a photo when viewing a certificate and will not display a photo on the verification page landed on by the QR code.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></p>
 							<div class="cp-ld-warning__detail">
-								<p><?php esc_html_e( 'Specifically, this means:', 'certificate-id-qr-verifier-for-learndash' ); ?></p>
+								<p><?php esc_html_e( 'Specifically, this means:', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></p>
 								<ul>
-									<li><?php esc_html_e( 'Users can view and download certificates without uploading a photo.', 'certificate-id-qr-verifier-for-learndash' ); ?></li>
-									<li><?php esc_html_e( 'The QR code verification page will not show a photo for the learner.', 'certificate-id-qr-verifier-for-learndash' ); ?></li>
-									<li><?php esc_html_e( 'Certificates generated while bypassed will have no photo snapshot on file.', 'certificate-id-qr-verifier-for-learndash' ); ?></li>
+									<li><?php esc_html_e( 'Users can view and download certificates without uploading a photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></li>
+									<li><?php esc_html_e( 'The QR code verification page will not show a photo for the learner.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></li>
+									<li><?php esc_html_e( 'Certificates generated while bypassed will have no photo snapshot on file.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></li>
 								</ul>
 							</div>
 							<div class="cp-ld-warning__actions">
 								<button type="button" class="cp-ld-warning__btn cp-ld-warning__btn--confirm" id="cp-ld-confirm-bypass">
-									<?php esc_html_e( 'Yes, bypass photo requirement', 'certificate-id-qr-verifier-for-learndash' ); ?>
+									<?php esc_html_e( 'Yes, bypass photo requirement', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 								</button>
 								<button type="button" class="cp-ld-warning__btn cp-ld-warning__btn--cancel" id="cp-ld-cancel-bypass">
-									<?php esc_html_e( 'Cancel', 'certificate-id-qr-verifier-for-learndash' ); ?>
+									<?php esc_html_e( 'Cancel', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 								</button>
 							</div>
 						</div>
@@ -612,22 +612,22 @@ class CP_LD_Settings {
 				<div class="cp-ld-logs" id="cp-ld-logs">
 					<button type="button" class="cp-ld-logs__toggle" id="cp-ld-logs-toggle">
 						<span class="cp-ld-logs__toggle-arrow" id="cp-ld-logs-arrow">&#9654;</span>
-						<?php esc_html_e( 'View User Photo Changes', 'certificate-id-qr-verifier-for-learndash' ); ?>
+						<?php esc_html_e( 'View User Photo Changes', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>
 						<span class="cp-ld-logs__toggle-count" id="cp-ld-logs-count" style="display:none;"></span>
 					</button>
 					<div class="cp-ld-logs__body" id="cp-ld-logs-body">
 						<div class="cp-ld-logs__toolbar">
 							<input type="text" class="cp-ld-logs__search" id="cp-ld-logs-search"
-								placeholder="<?php esc_attr_e( 'Search users...', 'certificate-id-qr-verifier-for-learndash' ); ?>" />
+								placeholder="<?php esc_attr_e( 'Search users...', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?>" />
 							<select class="cp-ld-logs__sort" id="cp-ld-logs-sort">
-								<option value="recent"><?php esc_html_e( 'Most Recent Change', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
-								<option value="oldest"><?php esc_html_e( 'Oldest Change', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
-								<option value="changes_desc"><?php esc_html_e( 'Most Changes', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
-								<option value="changes_asc"><?php esc_html_e( 'Fewest Changes', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
-								<option value="name_asc"><?php esc_html_e( 'Name A-Z', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
-								<option value="name_desc"><?php esc_html_e( 'Name Z-A', 'certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="recent"><?php esc_html_e( 'Most Recent Change', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="oldest"><?php esc_html_e( 'Oldest Change', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="changes_desc"><?php esc_html_e( 'Most Changes', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="changes_asc"><?php esc_html_e( 'Fewest Changes', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="name_asc"><?php esc_html_e( 'Name A-Z', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
+								<option value="name_desc"><?php esc_html_e( 'Name Z-A', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></option>
 							</select>
-							<span class="cp-ld-logs__loading" id="cp-ld-logs-loading" style="display:none;"><?php esc_html_e( 'Loading...', 'certificate-id-qr-verifier-for-learndash' ); ?></span>
+							<span class="cp-ld-logs__loading" id="cp-ld-logs-loading" style="display:none;"><?php esc_html_e( 'Loading...', 'aikellogg-certificate-id-qr-verifier-for-learndash' ); ?></span>
 						</div>
 						<div id="cp-ld-logs-table-wrap"></div>
 						<div id="cp-ld-logs-pagination" class="cp-ld-logs__pagination" style="display:none;"></div>
@@ -654,10 +654,10 @@ class CP_LD_Settings {
 			var nonce   = <?php echo wp_json_encode( $nonce ); ?>;
 
 			var modeText = {
-				requiredTitle: <?php echo wp_json_encode( __( 'Photo Required', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				requiredDesc:  <?php echo wp_json_encode( __( 'Learners must have a photo on file before viewing any certificate. The verification page displays their photo.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				bypassedTitle: <?php echo wp_json_encode( __( 'Photo Not Required', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				bypassedDesc:  <?php echo wp_json_encode( __( 'Learners can view certificates without a photo. The verification page does not display a photo.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>
+				requiredTitle: <?php echo wp_json_encode( __( 'Photo Required', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				requiredDesc:  <?php echo wp_json_encode( __( 'Learners must have a photo on file before viewing any certificate. The verification page displays their photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				bypassedTitle: <?php echo wp_json_encode( __( 'Photo Not Required', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				bypassedDesc:  <?php echo wp_json_encode( __( 'Learners can view certificates without a photo. The verification page does not display a photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>
 			};
 			var toastTimer = null;
 
@@ -704,29 +704,29 @@ class CP_LD_Settings {
 			var expandedUsers = {};
 
 			var i18n = {
-				date:      <?php echo wp_json_encode( __( 'Date', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				user:      <?php echo wp_json_encode( __( 'User', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				changes:   <?php echo wp_json_encode( __( 'Changes', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				lastChange:<?php echo wp_json_encode( __( 'Last Change', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				action:    <?php echo wp_json_encode( __( 'Action', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				previous:  <?php echo wp_json_encode( __( 'Previous', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				newPhoto:  <?php echo wp_json_encode( __( 'New', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				by:        <?php echo wp_json_encode( __( 'By', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				ip:        <?php echo wp_json_encode( __( 'IP', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				profile:   <?php echo wp_json_encode( __( 'Profile', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				viewProfile: <?php echo wp_json_encode( __( 'View', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				prev:      <?php echo wp_json_encode( __( 'Previous', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				next:      <?php echo wp_json_encode( __( 'Next', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				showing:   <?php /* translators: 1: users shown, 2: all users */ echo wp_json_encode( __( 'Showing %1$s of %2$s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				noResults: <?php echo wp_json_encode( __( 'No photo changes found.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				usersWithChanges: <?php /* translators: %s: a number of users */ echo wp_json_encode( __( '%s users', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				date:      <?php echo wp_json_encode( __( 'Date', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				user:      <?php echo wp_json_encode( __( 'User', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				changes:   <?php echo wp_json_encode( __( 'Changes', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				lastChange:<?php echo wp_json_encode( __( 'Last Change', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				action:    <?php echo wp_json_encode( __( 'Action', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				previous:  <?php echo wp_json_encode( __( 'Previous', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				newPhoto:  <?php echo wp_json_encode( __( 'New', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				by:        <?php echo wp_json_encode( __( 'By', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				ip:        <?php echo wp_json_encode( __( 'IP', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				profile:   <?php echo wp_json_encode( __( 'Profile', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				viewProfile: <?php echo wp_json_encode( __( 'View', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				prev:      <?php echo wp_json_encode( __( 'Previous', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				next:      <?php echo wp_json_encode( __( 'Next', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				showing:   <?php /* translators: 1: users shown, 2: all users */ echo wp_json_encode( __( 'Showing %1$s of %2$s users', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				noResults: <?php echo wp_json_encode( __( 'No photo changes found.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				usersWithChanges: <?php /* translators: %s: a number of users */ echo wp_json_encode( __( '%s users', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
 				dash:      '&mdash;',
-				deleteBtn:     <?php echo wp_json_encode( __( 'Delete History', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				deleteTitle:   <?php echo wp_json_encode( __( 'Delete all photo change history?', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				deleteMsg:     <?php echo wp_json_encode( __( 'This will permanently delete all photo change log entries and their snapshot files for this user. This cannot be undone.', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				deleteConfirm: <?php echo wp_json_encode( __( 'Yes, delete history', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				deleteCancel:  <?php echo wp_json_encode( __( 'Cancel', 'certificate-id-qr-verifier-for-learndash' ) ); ?>,
-				deleting:      <?php echo wp_json_encode( __( 'Deleting...', 'certificate-id-qr-verifier-for-learndash' ) ); ?>
+				deleteBtn:     <?php echo wp_json_encode( __( 'Delete History', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				deleteTitle:   <?php echo wp_json_encode( __( 'Delete all photo change history?', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				deleteMsg:     <?php echo wp_json_encode( __( 'This will permanently delete all photo change log entries and their snapshot files for this user. This cannot be undone.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				deleteConfirm: <?php echo wp_json_encode( __( 'Yes, delete history', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				deleteCancel:  <?php echo wp_json_encode( __( 'Cancel', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>,
+				deleting:      <?php echo wp_json_encode( __( 'Deleting...', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ); ?>
 			};
 
 			logsToggle.addEventListener('click', function() {

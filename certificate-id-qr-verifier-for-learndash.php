@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name:       Certificate ID & QR Verifier for LearnDash
+ * Plugin Name:       AIKellogg Certificate ID & QR Verifier for LearnDash
  * Plugin URI:        https://aikellogg.com/#/certificate-verifier
  * Description:       Puts a unique certificate ID and a scannable QR code on LearnDash certificates. Anyone can scan the code to open a public page that confirms the certificate is genuine. Optional: require a learner photo on certificates.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Patrick Kellogg
  * Author URI:        https://aikellogg.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       certificate-id-qr-verifier-for-learndash
+ * Text Domain:       aikellogg-certificate-id-qr-verifier-for-learndash
  *
  * LearnDash is a trademark of its owner. This plugin is independent: it is not made or endorsed by LearnDash.
  *
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'CP_LD_VERSION', '1.2.0' );
+define( 'CP_LD_VERSION', '1.2.1' );
 define( 'CP_LD_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'CP_LD_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -64,6 +64,6 @@ add_action(
 		if ( ! current_user_can( 'activate_plugins' ) || ! class_exists( 'DVP_LD_QRCode' ) ) {
 			return;
 		}
-		echo '<div class="notice notice-warning"><p>' . esc_html__( 'Certificate ID & QR Verifier for LearnDash: another certificate verifier is also active (the toolkit\'s Certificate Verifier module). Use one of them, or certificates will get two QR codes and two IDs.', 'certificate-id-qr-verifier-for-learndash' ) . '</p></div>';
+		echo '<div class="notice notice-warning"><p>' . esc_html__( 'AIKellogg Certificate ID & QR Verifier for LearnDash: another certificate verifier is also active (the toolkit\'s Certificate Verifier module). Use one of them, or certificates will get two QR codes and two IDs.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p></div>';
 	}
 );

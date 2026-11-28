@@ -1,10 +1,10 @@
-=== Certificate ID & QR Verifier for LearnDash ===
+=== AIKellogg Certificate ID & QR Verifier for LearnDash ===
 Contributors: pfkellogg
 Tags: learndash, certificate, qr code, verification, lms
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,7 @@ LearnDash is a trademark of its owner. This plugin is independent: it is not mad
 == Installation ==
 
 1. Install and activate **LearnDash**, and set up a certificate for a course, quiz or group.
-2. Install **Certificate ID & QR Verifier for LearnDash** from **Plugins → Add New**, or upload the zip, and activate it.
+2. Install **AIKellogg Certificate ID & QR Verifier for LearnDash** from **Plugins → Add New**, or upload the zip, and activate it.
 3. That's all: certificates now carry a QR code. Optionally add the shortcodes above to place the code and print the ID.
 
 == Frequently Asked Questions ==
@@ -132,6 +132,9 @@ Use one or the other: with both active, certificates would get two QR codes. The
 
 == Changelog ==
 
+= 1.2.1 =
+* New name for the WordPress.org directory: AIKellogg Certificate ID & QR Verifier for LearnDash (text domain aikellogg-certificate-id-qr-verifier-for-learndash). Nothing else changes: your settings, certificate IDs and photos stay as they are.
+
 = 1.2.0 =
 * New name for the WordPress.org directory: Certificate ID & QR Verifier for LearnDash (was Certificate Photo Verifier For LearnDash).
 * Fixed: the QR codes could not be scanned (several errors in the code generator). Every link length now scans.
@@ -154,6 +157,9 @@ Use one or the other: with both active, certificates would get two QR codes. The
 * First version.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+A new name for the WordPress.org directory; nothing else changes.
 
 = 1.2.0 =
 Fixes QR codes that could not be scanned. The learner photo is now optional (off by default).

@@ -256,14 +256,14 @@ class CP_LD_Legacy_ELC {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public lookup.
 		$asked = isset( $_GET['certificate_id'] ) ? sanitize_text_field( wp_unslash( $_GET['certificate_id'] ) ) : '';
 		$html  = '<form class="cp-ld-cert-search" method="get" action="' . esc_url( get_permalink() ) . '">'
-			. '<label for="cp-ld-cert-search-id">' . esc_html__( 'Certificate ID', 'certificate-id-qr-verifier-for-learndash' ) . '</label> '
+			. '<label for="cp-ld-cert-search-id">' . esc_html__( 'Certificate ID', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</label> '
 			. '<div class="cp-ld-cert-search-row"><input type="text" id="cp-ld-cert-search-id" name="certificate_id" maxlength="80" size="28" value="' . esc_attr( $asked ) . '" placeholder="CERT-1795464733-6-1" autocomplete="off" required />'
-			. '<button type="submit">' . esc_html__( 'Verify', 'certificate-id-qr-verifier-for-learndash' ) . '</button></div>'
-			. '<p class="cp-ld-cert-search-help">' . esc_html__( 'Type the ID printed on the certificate, or scan its QR code.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>'
+			. '<button type="submit">' . esc_html__( 'Verify', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</button></div>'
+			. '<p class="cp-ld-cert-search-help">' . esc_html__( 'Type the ID printed on the certificate, or scan its QR code.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>'
 			. '</form>';
 		if ( '' !== $asked ) {
 			// A real ID was sent on to its verification page before the page loaded, so this one wasn't found.
-			$html .= '<p class="cp-ld-cert-search-none" role="status">' . esc_html__( 'No certificate was found with that ID. Check it and try again.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
+			$html .= '<p class="cp-ld-cert-search-none" role="status">' . esc_html__( 'No certificate was found with that ID. Check it and try again.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>';
 		}
 		return '<div class="cp-ld-cert-search-wrap">' . $html . '</div>';
 	}
@@ -277,6 +277,6 @@ class CP_LD_Legacy_ELC {
 		if ( ! function_exists( 'elc_certificate_id' ) && ! function_exists( 'elc_ssc_front_search' ) ) {
 			return;
 		}
-		echo '<div class="notice notice-info"><p>' . esc_html__( 'Certificate ID & QR Verifier for LearnDash replaces the older Certificate Tracker and Certificate Verifier for LearnDash (eLearning Complete), which are still active. You can deactivate them: certificate IDs they issued, their shortcodes and their QR codes keep working.', 'certificate-id-qr-verifier-for-learndash' ) . '</p></div>';
+		echo '<div class="notice notice-info"><p>' . esc_html__( 'AIKellogg Certificate ID & QR Verifier for LearnDash replaces the older Certificate Tracker and Certificate Verifier for LearnDash (eLearning Complete), which are still active. You can deactivate them: certificate IDs they issued, their shortcodes and their QR codes keep working.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p></div>';
 	}
 }

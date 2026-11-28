@@ -35,7 +35,7 @@ class CP_LD_Photo_Block {
 
 	public function render_block( $attributes, $content ) {
 		if ( ! is_user_logged_in() ) {
-			return '<p class="cp-ld-notice">' . esc_html__( 'Please log in to manage your certificate photo.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
+			return '<p class="cp-ld-notice">' . esc_html__( 'Please log in to manage your certificate photo.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>';
 		}
 		ob_start();
 		include CP_LD_DIR . 'templates/upload-form.php';

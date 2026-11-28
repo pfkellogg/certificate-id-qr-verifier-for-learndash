@@ -1,6 +1,6 @@
 <?php
 /**
- * Certificate ID & QR Verifier for LearnDash: removes its setting and the user data it keeps when it is deleted.
+ * AIKellogg Certificate ID & QR Verifier for LearnDash: removes its setting and the user data it keeps when it is deleted.
  * Photos learners uploaded stay in the Media Library (they're the site's files).
  */
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {

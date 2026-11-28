@@ -225,9 +225,9 @@ class CP_LD_Approvals {
 			array(
 				'start'      => '',
 				'end'        => '',
-				'expired'    => __( 'Expired', 'certificate-id-qr-verifier-for-learndash' ),
-				'valid'      => __( 'Valid', 'certificate-id-qr-verifier-for-learndash' ),
-				'not_active' => __( 'Not active', 'certificate-id-qr-verifier-for-learndash' ),
+				'expired'    => __( 'Expired', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
+				'valid'      => __( 'Valid', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
+				'not_active' => __( 'Not active', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 				'step'       => '', // a lesson or topic ID: its completion instead of the course's
 			),
 			$atts,
@@ -254,7 +254,7 @@ class CP_LD_Approvals {
 	public function add_box() {
 		add_meta_box(
 			'cp-ld-approval-numbers',
-			__( 'Approval numbers by date', 'certificate-id-qr-verifier-for-learndash' ),
+			__( 'Approval numbers by date', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 			array( $this, 'render_box' ),
 			self::post_types(),
 			'normal',
@@ -270,16 +270,16 @@ class CP_LD_Approvals {
 			'to'     => '',
 			'number' => '',
 		); // an empty row to fill in
-		echo '<p>' . esc_html__( 'The certificate shows the number whose dates include the day the learner completed. Leave "To" empty for the current period.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
-		echo '<table class="widefat striped" id="cp-ld-approvals"><thead><tr><th>' . esc_html__( 'From', 'certificate-id-qr-verifier-for-learndash' ) . '</th><th>' . esc_html__( 'To', 'certificate-id-qr-verifier-for-learndash' ) . '</th><th>' . esc_html__( 'Approval number', 'certificate-id-qr-verifier-for-learndash' ) . '</th></tr></thead><tbody>';
+		echo '<p>' . esc_html__( 'The certificate shows the number whose dates include the day the learner completed. Leave "To" empty for the current period.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>';
+		echo '<table class="widefat striped" id="cp-ld-approvals"><thead><tr><th>' . esc_html__( 'From', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</th><th>' . esc_html__( 'To', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</th><th>' . esc_html__( 'Approval number', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</th></tr></thead><tbody>';
 		foreach ( $rows as $r ) {
 			echo '<tr><td><input type="date" name="cp_ld_approval_from[]" value="' . esc_attr( $r['from'] ) . '" /></td>'
 				. '<td><input type="date" name="cp_ld_approval_to[]" value="' . esc_attr( $r['to'] ) . '" /></td>'
 				. '<td><input type="text" class="regular-text" name="cp_ld_approval_number[]" value="' . esc_attr( $r['number'] ) . '" /></td></tr>';
 		}
 		echo '</tbody></table>';
-		echo '<p><button type="button" class="button" onclick="var b=document.querySelector(\'#cp-ld-approvals tbody\'),r=b.rows[b.rows.length-1].cloneNode(true);r.querySelectorAll(\'input\').forEach(function(i){i.value=\'\';});b.appendChild(r);">' . esc_html__( 'Add a row', 'certificate-id-qr-verifier-for-learndash' ) . '</button></p>';
-		echo '<p class="description">' . esc_html__( 'On the certificate: [cp_ld_approval_number before="Approval #: "]. To remove a row, empty its number.', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
+		echo '<p><button type="button" class="button" onclick="var b=document.querySelector(\'#cp-ld-approvals tbody\'),r=b.rows[b.rows.length-1].cloneNode(true);r.querySelectorAll(\'input\').forEach(function(i){i.value=\'\';});b.appendChild(r);">' . esc_html__( 'Add a row', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</button></p>';
+		echo '<p class="description">' . esc_html__( 'On the certificate: [cp_ld_approval_number before="Approval #: "]. To remove a row, empty its number.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>';
 	}
 
 	public function save_box( $post_id, $post ) {

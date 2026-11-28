@@ -1,6 +1,6 @@
-# Certificate ID & QR Verifier for LearnDash
+# AIKellogg Certificate ID & QR Verifier for LearnDash
 
-![Certificate ID & QR Verifier for LearnDash](.wordpress-org/banner-1544x500.png)
+![AIKellogg Certificate ID & QR Verifier for LearnDash](.wordpress-org/banner-1544x500.png)
 
 **Scan any LearnDash certificate and know, in a second, that it's genuine, current and approved.**
 

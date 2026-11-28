@@ -97,10 +97,10 @@ class CP_LD_Photo_Manager {
 		check_ajax_referer( 'cp_ld_photo_nonce', 'nonce' );
 		$user_id = get_current_user_id();
 		if ( ! $user_id ) {
-			wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		if ( empty( $_FILES['cp_ld_photo'] ) ) {
-			wp_send_json_error( array( 'message' => __( 'No file received.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'No file received.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- an upload: its real type is checked below, and WordPress stores it.
 		$file     = $_FILES['cp_ld_photo'];
@@ -109,10 +109,10 @@ class CP_LD_Photo_Manager {
 		$mime     = finfo_file( $finfo, $file['tmp_name'] );
 		finfo_close( $finfo );
 		if ( ! in_array( $mime, $allowed, true ) ) {
-			wp_send_json_error( array( 'message' => __( 'Only JPEG, PNG, or WebP images are allowed.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Only JPEG, PNG, or WebP images are allowed.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		if ( $file['size'] > 5 * MB_IN_BYTES ) {
-			wp_send_json_error( array( 'message' => __( 'Photo must be under 5 MB.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Photo must be under 5 MB.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -137,7 +137,7 @@ class CP_LD_Photo_Manager {
 
 		$url = wp_get_attachment_image_src( $attachment_id, 'medium' );
 		wp_send_json_success( array(
-			'message'   => __( 'Photo saved successfully.', 'certificate-id-qr-verifier-for-learndash' ),
+			'message'   => __( 'Photo saved successfully.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 			'photo_url' => $url ? $url[0] : '',
 			'source'    => 'custom',
 		) );
@@ -155,7 +155,7 @@ class CP_LD_Photo_Manager {
 		}
 		$user = get_userdata( $user_id );
 		if ( ! $user || ! self::has_gravatar( $user->user_email ) ) {
-			wp_send_json_error( array( 'message' => __( 'You must have a Gravatar to use this option.', 'certificate-id-qr-verifier-for-learndash' ) ) );
+			wp_send_json_error( array( 'message' => __( 'You must have a Gravatar to use this option.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) ) );
 		}
 		$old_id = self::get_photo_id( $user_id );
 		if ( $old_id ) {
@@ -166,7 +166,7 @@ class CP_LD_Photo_Manager {
 		}
 		$gravatar_url = self::get_gravatar_url( $user_id );
 		wp_send_json_success( array(
-			'message'   => __( 'Switched to Gravatar.', 'certificate-id-qr-verifier-for-learndash' ),
+			'message'   => __( 'Switched to Gravatar.', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 			'photo_url' => $gravatar_url,
 			'source'    => 'gravatar',
 		) );
@@ -253,8 +253,8 @@ class CP_LD_Photo_Manager {
 			'gravatarUrl'  => is_user_logged_in() && $user_id ? ( self::get_gravatar_url( $user_id ) ?: '' ) : '',
 			'returnUrl'    => $return_url,
 			'i18n'         => array(
-				'uploading' => __( 'Uploading…', 'certificate-id-qr-verifier-for-learndash' ),
-				'switching' => __( 'Switching to Gravatar…', 'certificate-id-qr-verifier-for-learndash' ),
+				'uploading' => __( 'Uploading…', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
+				'switching' => __( 'Switching to Gravatar…', 'aikellogg-certificate-id-qr-verifier-for-learndash' ),
 			),
 		) );
 	}

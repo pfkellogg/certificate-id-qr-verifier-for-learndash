@@ -170,7 +170,7 @@ class CP_LD_Certificate_Gate {
 			$pdf->SetFont( 'helvetica', '', 10 );
 			$pdf->SetTextColor( 60, 60, 60 );
 			$pdf->SetXY( $qr_x, $qr_y + $qr_size + 1 );
-			$pdf->Cell( $qr_size, 6, __( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
+			$pdf->Cell( $qr_size, 6, __( 'Scan to verify', 'aikellogg-certificate-id-qr-verifier-for-learndash' ), 0, 0, 'C' );
 			if ( ! empty( $sc['show_url'] ) ) {
 				// The link under the code, small, ending at the code's right edge (a link is much wider than the code;
 				// centred under it, it ran off the page).
@@ -221,7 +221,7 @@ class CP_LD_Certificate_Gate {
 		$svg        = CP_LD_QRCode::svg( $verify_url, $qr_w );
 		$label_html = '';
 		if ( $atts['label'] ) {
-			$label_html = '<p class="cp-ld-qr-label" style="margin:4px 0 0;font-size:11px;color:#64748b;">' . esc_html__( 'Scan to verify', 'certificate-id-qr-verifier-for-learndash' ) . '</p>';
+			$label_html = '<p class="cp-ld-qr-label" style="margin:4px 0 0;font-size:11px;color:#64748b;">' . esc_html__( 'Scan to verify', 'aikellogg-certificate-id-qr-verifier-for-learndash' ) . '</p>';
 		}
 		$url_html = '';
 		if ( $atts['show_url'] ) {
